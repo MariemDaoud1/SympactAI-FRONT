@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 function LandingPage() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [scrollY, setScrollY] = useState(0);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     setIsLoaded(true);
@@ -43,6 +44,96 @@ function LandingPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 overflow-hidden">
+      {/* Navigation */}
+      <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrollY > 50 ? 'bg-slate-900/95 backdrop-blur-lg border-b border-white/10' : 'bg-transparent'}`}>
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <div className="flex items-center justify-between">
+            {/* Logo */}
+            <div className="flex items-center space-x-2">
+              <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center">
+                <span className="text-white font-bold text-lg">P</span>
+              </div>
+              <span className="text-2xl font-bold text-white">
+                Pump<span className="text-red-400">Watch</span>
+              </span>
+            </div>
+
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex items-center space-x-8">
+              <a href="#features" className="text-white/80 hover:text-white transition-colors duration-200 font-medium">
+                Features
+              </a>
+              <a href="#pricing" className="text-white/80 hover:text-white transition-colors duration-200 font-medium">
+                Pricing
+              </a>
+              <a href="#about" className="text-white/80 hover:text-white transition-colors duration-200 font-medium">
+                About
+              </a>
+              <a href="#contact" className="text-white/80 hover:text-white transition-colors duration-200 font-medium">
+                Contact
+              </a>
+            </div>
+
+            {/* Desktop CTA Buttons */}
+            <div className="hidden md:flex items-center space-x-4">
+              <button
+                onClick={() => window.location.href = '#signin'}
+                className="text-white/80 hover:text-white transition-colors duration-200 font-medium"
+              >
+                Sign In
+              </button>
+              <button
+                onClick={() => window.location.href = '#signup'}
+                className="bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-2 rounded-lg font-medium hover:from-red-600 hover:to-red-700 transition-all duration-200 transform hover:scale-105"
+              >
+                Get Started
+              </button>
+            </div>
+
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="md:hidden w-8 h-8 flex flex-col items-center justify-center space-y-1 group"
+            >
+              <div className={`w-6 h-0.5 bg-white transition-all duration-300 ${isMobileMenuOpen ? 'rotate-45 translate-y-2' : ''}`}></div>
+              <div className={`w-6 h-0.5 bg-white transition-all duration-300 ${isMobileMenuOpen ? 'opacity-0' : ''}`}></div>
+              <div className={`w-6 h-0.5 bg-white transition-all duration-300 ${isMobileMenuOpen ? '-rotate-45 -translate-y-2' : ''}`}></div>
+            </button>
+          </div>
+
+          {/* Mobile Menu */}
+          <div className={`md:hidden overflow-hidden transition-all duration-300 ${isMobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
+            <div className="pt-6 pb-4 space-y-4">
+              <a href="#features" className="block text-white/80 hover:text-white transition-colors duration-200 font-medium py-2">
+                Features
+              </a>
+              <a href="#pricing" className="block text-white/80 hover:text-white transition-colors duration-200 font-medium py-2">
+                Pricing
+              </a>
+              <a href="#about" className="block text-white/80 hover:text-white transition-colors duration-200 font-medium py-2">
+                About
+              </a>
+              <a href="#contact" className="block text-white/80 hover:text-white transition-colors duration-200 font-medium py-2">
+                Contact
+              </a>
+              <div className="pt-4 space-y-3">
+                <button
+                  onClick={() => window.location.href = '#signin'}
+                  className="block w-full text-left text-white/80 hover:text-white transition-colors duration-200 font-medium py-2"
+                >
+                  Sign In
+                </button>
+                <button
+                  onClick={() => window.location.href = '#signup'}
+                  className="block w-full bg-gradient-to-r from-red-500 to-red-600 text-white px-6 py-3 rounded-lg font-medium hover:from-red-600 hover:to-red-700 transition-all duration-200 text-center"
+                >
+                  Get Started
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
       {/* Animated Background Elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
@@ -51,7 +142,7 @@ function LandingPage() {
       </div>
 
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center px-6 pt-20">
+      <section className="relative min-h-screen flex items-center justify-center px-6 pt-32">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Hero Text */}
           <div className={`space-y-8 transform transition-all duration-1000 ${isLoaded ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
@@ -158,7 +249,7 @@ function LandingPage() {
       </section>
 
       {/* Features Section */}
-      <section className="py-24 px-6">
+      <section id="features" className="py-24 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-20">
             <h2 className="text-5xl font-bold mb-6">

@@ -43,15 +43,15 @@ function LandingPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-slate-800 via-blue-500 to-slate-300 overflow-hidden">
       {/* Navigation */}
-      <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrollY > 50 ? 'bg-slate-900/95 backdrop-blur-lg border-b border-white/10' : 'bg-transparent'}`}>
+      <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrollY > 50 ? 'bg-slate-700/95 backdrop-blur-lg border-b border-blue-500/30' : 'bg-transparent'}`}>
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             {/* Logo */}
             <div className="flex items-center space-x-2">
-              <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center">
-                <span className="text-white font-bold text-lg">P</span>
+              <div className="w-22 h-20 bg-gradient-to-br from-red-500 to-red-500 rounded-xl flex items-center justify-center">
+                <img src="/public/logo.png" alt="" />
               </div>
               <span className="text-2xl font-bold text-white">
                 Pump<span className="text-red-400">Watch</span>

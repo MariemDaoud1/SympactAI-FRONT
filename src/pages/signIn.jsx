@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { User, Lock } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export default function SignInPage() {
+  const navigate = useNavigate();
   return (
     <div className="flex h-screen animate-fadeIn">
       {/* Left side minimal gradient panel */}
@@ -15,7 +17,7 @@ export default function SignInPage() {
           </div>
 
           {/* Rotated SIGN UP Button */}
-          <button style={{ fontSize: '20px' }}
+          <button style={{ fontSize: '20px' }} onClick={() => navigate('/signup')}
             className="px-6 py-2 border border-[#6c88e8] text-[#6c88e8] rounded-full text-sm font-bold transform rotate-180-translate-x-4 hover:bg-blue hover:text-white hover:border-[#f44336] transition-all duration-300"
           >
             SIGN UP

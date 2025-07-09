@@ -7,7 +7,7 @@ export default function SignUpPage() {
   return (
     <div className="flex h-screen animate-fadeIn">
       {/* Left side minimal gradient panel */}
-      <div className="w-1/3 bg-gradient-to-br from-[#d5e3ff] to-[#f0f4ff] relative flex items-center justify-center transition-all duration-700 ease-in-out">
+      <div className="w-1/3 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 relative flex items-center justify-center transition-all duration-700 ease-in-out">
 
         {/* SIGN UP label and rotated SIGN IN button */}
         <div className="absolute top-1/2 right-[-112px] transform -translate-y-1/2 rotate-90 flex items-center gap-4">
@@ -18,14 +18,14 @@ export default function SignUpPage() {
 
           {/* Rotated SIGN IN Button */}
           <button style={{ fontSize: '20px' }}
-            className="px-6 py-2 border border-[#6c88e8] text-[#6c88e8] rounded-full text-sm font-bold transform rotate-180-translate-x-4 hover:bg-[#6c88e8] hover:text-white hover:border-[#f44336] transition-all duration-300"
+            className="px-6 py-2 border border-[#6c88e8] text-[#6c88e8] rounded-full text-sm font-bold transform rotate-180-translate-x-4 hover:bg-blue hover:text-white hover:border-[#f44336] transition-all duration-300"
           >
             SIGN IN
           </button>
         </div>
 
         {/* Footer */}
-        <div className="absolute bottom-4 text-xs text-blue-700">
+        <div className="absolute bottom-4 text-xs text-white">
           PumpWatch all rights reserved 2024
         </div>
       </div>

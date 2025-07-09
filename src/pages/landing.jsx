@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 function LandingPage() {
   const [isLoaded, setIsLoaded] = useState(false);
   const [scrollY, setScrollY] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setIsLoaded(true);
@@ -78,13 +81,13 @@ function LandingPage() {
             {/* Desktop CTA Buttons */}
             <div className="hidden md:flex items-center space-x-4">
               <button
-                onClick={() => window.location.href = '#signin'}
+                onClick={() => navigate('/signin')}
                 className="text-white/80 hover:text-cyan-400 transition-colors duration-200 font-medium"
               >
                 Sign In
               </button>
               <button
-                onClick={() => window.location.href = '#signup'}
+                onClick={() => navigate('/signup')}
                 className="bg-gradient-to-r from-cyan-500 to-cyan-600 text-white px-6 py-2 rounded-lg font-medium hover:from-cyan-600 hover:to-cyan-700 transition-all duration-200 transform hover:scale-105"
               >
                 Get Started
@@ -119,13 +122,13 @@ function LandingPage() {
               </a>
               <div className="pt-4 space-y-3">
                 <button
-                  onClick={() => window.location.href = '#signin'}
+                  onClick={() => navigate('/signin')}
                   className="block w-full text-left text-white/80 hover:text-cyan-400 transition-colors duration-200 font-medium py-2"
                 >
                   Sign In
                 </button>
                 <button
-                  onClick={() => window.location.href = '#signup'}
+                  onClick={() => navigate('/signup')}
                   className="block w-full bg-gradient-to-r from-cyan-500 to-cyan-600 text-white px-6 py-3 rounded-lg font-medium hover:from-cyan-600 hover:to-cyan-700 transition-all duration-200 text-center"
                 >
                   Get Started
@@ -172,7 +175,7 @@ function LandingPage() {
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
               <button
-                onClick={() => window.location.href = '#signup'}
+                onClick={() => navigate('/signup')}
                 className="group relative bg-gradient-to-r from-cyan-500 to-cyan-600 text-white text-lg font-semibold px-8 py-4 rounded-xl shadow-2xl hover:shadow-cyan-500/30 transition-all duration-300 transform hover:scale-105 hover:-translate-y-1"
               >
                 <span className="relative z-10">Get Started Free</span>
@@ -180,7 +183,7 @@ function LandingPage() {
               </button>
 
               <button
-                onClick={() => window.location.href = '#signin'}
+                onClick={() => navigate('/signin')}
                 className="group bg-white/10 backdrop-blur-sm border border-white/20 text-white text-lg font-semibold px-8 py-4 rounded-xl shadow-xl hover:bg-white/20 transition-all duration-300 transform hover:scale-105 hover:-translate-y-1"
               >
                 Sign In

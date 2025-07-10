@@ -11,10 +11,6 @@ export default function SignInPage() {
 
         {/* SIGN IN label and rotated SIGN UP button */}
         <div className="absolute top-1/2 right-[-112px] transform -translate-y-1/2 rotate-90 flex items-center gap-4">
-          {/* SIGN IN Label */}
-          <div style={{ fontSize: '20px' }} className="bg-white rounded-full px-6 py-2 shadow-md">
-            <span className="text-[#6c88e8] font-bold">SIGN IN</span>
-          </div>
 
           {/* Rotated SIGN UP Button */}
           <button style={{ fontSize: '20px' }} onClick={() => navigate('/signup')}
@@ -22,10 +18,15 @@ export default function SignInPage() {
           >
             SIGN UP
           </button>
+          {/* SIGN IN Label */}
+          <div style={{ fontSize: '20px' }} className="bg-white rounded-full px-6 py-2 shadow-md">
+            <span className="text-[#6c88e8] font-bold">SIGN IN</span>
+          </div>
         </div>
 
+
         {/* Footer */}
-        <div className="absolute bottom-4 text-xs text-blue-700">
+        <div className="absolute bottom-4 text-xs text-white">
           PumpWatch all rights reserved 2024
         </div>
       </div>

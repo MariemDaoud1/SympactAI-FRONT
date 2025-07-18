@@ -1,38 +1,63 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function MonitoringPage() {
+  const navigate = useNavigate();
   const [selectedPump, setSelectedPump] = useState("Centrifugal Pump 1 (CP-12398)");
+
+  const navItemsManage = ["Home", "Analytics", "Monitoring", "Alerts"];
+  const navItemsPreferences = ["Settings", "Help", "Our Service Providers"];
+
+  const handleNavigation = (label) => {
+    const path = "/" + label.toLowerCase().replace(/\s+/g, "-");
+    navigate(path);
+  };
 
   return (
     <div className="flex min-h-screen font-sans bg-[#f7f9fc]">
       {/* Sidebar */}
       <aside className="w-64 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 text-white p-6">
-        <div className="text-3xl font-bold mb-10">
-          <div className="flex items-center gap-2">
-            <div className="bg-white text-[#1e3a8a] px-2 py-1 rounded-full font-black">P</div>
-            <div className="text-xl">PUMP</div>
+       <div className="text-3xl font-bold mb-10">
+          <div className="flex items-center gap-2 hover:scale-105 transition-transform cursor-pointer">
+            <div className="bg-white text-blue-800 px-2 py-1 rounded-full font-black animate-pulse">
+              <img src="/public/logo.png" alt="" />
+            </div>
           </div>
         </div>
 
         <nav className="space-y-2">
           <p className="text-sm text-gray-300 mb-2">Manage</p>
-          {['Home', 'Analytics', 'Monitoring', 'Alerts'].map((item) => (
-            <div
+          {navItemsManage.map((item) => (
+            <button
               key={item}
-              className={`py-2 px-4 rounded-md ${item === 'Monitoring' ? 'bg-white text-[#1e3a8a] font-semibold' : 'hover:bg-blue-700'}`}
+              onClick={() => handleNavigation(item)}
+              className={`w-full text-left py-2 px-4 rounded-md transition ${
+                item === "Monitoring"
+                  ? "bg-white text-[#1e3a8a] font-semibold"
+                  : "hover:bg-blue-700"
+              }`}
             >
               {item}
-            </div>
+            </button>
           ))}
 
           <p className="text-sm text-gray-300 mt-6 mb-2">Preferences</p>
-          {['Settings', 'Help', 'Our Service Providers'].map((item) => (
-            <div key={item} className="py-2 px-4 rounded-md hover:bg-blue-700">
+          {navItemsPreferences.map((item) => (
+            <button
+              key={item}
+              onClick={() => handleNavigation(item)}
+              className="w-full text-left py-2 px-4 rounded-md hover:bg-blue-700"
+            >
               {item}
-            </div>
+            </button>
           ))}
 
-          <div className="mt-10 text-sm">Log Out</div>
+          <button
+            onClick={() => handleNavigation("logout")}
+            className="mt-2 text-sm hover:text-red-400"
+          >
+            Log Out
+          </button>
         </nav>
 
         <footer className="absolute bottom-4 left-6 text-xs text-gray-300">
@@ -45,7 +70,7 @@ export default function MonitoringPage() {
         {/* Header */}
         <header className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-2xl font-semibold text-gray-800">Welcome Back, Ammar!</h1>
+            <h1 className="text-2xl font-semibold text-gray-800">Welcome Back, username!</h1>
             <p className="text-gray-500 text-sm">Here's what's happening with your pumps!</p>
           </div>
 
@@ -59,7 +84,7 @@ export default function MonitoringPage() {
                 className="rounded-full w-10 h-10"
               />
               <div className="text-sm">
-                <div className="font-semibold">Ammar Labidih</div>
+                <div className="font-semibold">username</div>
                 <div className="text-gray-500">ID 02943</div>
               </div>
             </div>
@@ -68,7 +93,8 @@ export default function MonitoringPage() {
 
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-[#1e3a8a]">
-            Centrifugal Pump 1 <span className="text-sm font-normal text-black">(CP-12398)</span>
+            Centrifugal Pump 1{" "}
+            <span className="text-sm font-normal text-black">(CP-12398)</span>
           </h2>
           <select
             value={selectedPump}
@@ -83,9 +109,24 @@ export default function MonitoringPage() {
 
         {/* Status cards */}
         <section className="grid grid-cols-3 gap-6 mb-8">
-          <StatusCard title="Current Pump Status" value="ON" desc="CP-12398 Under Control" color="bg-gradient-to-r from-[#32d296] to-[#0fa9a3]" />
-          <StatusCard title="Live Pressure" value="4 PSI" desc="Detecting Pressure Drops" color="bg-gradient-to-r from-[#7c3aed] to-[#8b5cf6]" />
-          <StatusCard title="Live Temperature" value="300 K" desc="Temperature is optimal" color="bg-gradient-to-r from-[#4f46e5] to-[#6366f1]" />
+          <StatusCard
+            title="Current Pump Status"
+            value="ON"
+            desc="CP-12398 Under Control"
+            color="bg-gradient-to-r from-[#32d296] to-[#0fa9a3]"
+          />
+          <StatusCard
+            title="Live Pressure"
+            value="4 PSI"
+            desc="Detecting Pressure Drops"
+            color="bg-gradient-to-r from-[#7c3aed] to-[#8b5cf6]"
+          />
+          <StatusCard
+            title="Live Temperature"
+            value="300 K"
+            desc="Temperature is optimal"
+            color="bg-gradient-to-r from-[#4f46e5] to-[#6366f1]"
+          />
         </section>
 
         {/* Live charts */}

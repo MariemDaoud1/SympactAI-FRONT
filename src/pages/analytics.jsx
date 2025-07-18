@@ -1,6 +1,8 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function AnalyticsPage() {
+  const navigate = useNavigate();
   const [selectedPump, setSelectedPump] = useState("Centrifugal Pump 2 (CP-12398)");
   const [selectedQuarter, setSelectedQuarter] = useState("Fourth Quarter of the month");
 
@@ -17,36 +19,59 @@ export default function AnalyticsPage() {
     "Fourth Quarter of the month"
   ];
 
+  const manageRoutes = {
+    Home: "/home",
+    Analytics: "/analytics",
+    Monitoring: "/monitoring",
+    Alerts: "/alerts",
+  };
+
+  const prefRoutes = {
+    Settings: "/settings",
+    Help: "/help",
+    "Our Service Providers": "/providers",
+  };
+
   return (
     <div className="flex min-h-screen font-sans bg-gray-100">
       {/* Sidebar */}
       <aside className="w-64 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 text-white p-6">
         <div className="text-3xl font-bold mb-10">
-          <div className="flex items-center gap-2">
-            <div className="bg-white text-blue-800 px-2 py-1 rounded-full font-black">P</div>
-            <div className="text-xl">PUMP</div>
+          <div className="flex items-center gap-2 hover:scale-105 transition-transform cursor-pointer">
+            <div className="bg-white text-blue-800 px-2 py-1 rounded-full font-black animate-pulse">
+              <img src="/public/logo.png" alt="" />
+            </div>
           </div>
         </div>
 
         <nav className="space-y-2">
           <p className="text-sm text-gray-300 mb-2">Manage</p>
-          {['Home', 'Analytics', 'Monitoring', 'Alerts'].map((item) => (
+          {Object.entries(manageRoutes).map(([label, path]) => (
             <div
-              key={item}
-              className={`py-2 px-4 rounded-md ${item === 'Analytics' ? 'bg-white text-blue-800 font-semibold' : 'hover:bg-blue-700'}`}
+              key={label}
+              onClick={() => navigate(path)}
+              className={`py-2 px-4 rounded-md cursor-pointer ${
+                label === 'Analytics' ? 'bg-white text-blue-800 font-semibold' : 'hover:bg-blue-700'
+              }`}
             >
-              {item}
+              {label}
             </div>
           ))}
 
           <p className="text-sm text-gray-300 mt-6 mb-2">Preferences</p>
-          {['Settings', 'Help', 'Our Service Providers'].map((item) => (
-            <div key={item} className="py-2 px-4 rounded-md hover:bg-blue-700">
-              {item}
+          {Object.entries(prefRoutes).map(([label, path]) => (
+            <div
+              key={label}
+              onClick={() => navigate(path)}
+              className="py-2 px-4 rounded-md cursor-pointer hover:bg-blue-700"
+            >
+              {label}
             </div>
           ))}
 
-          <div className="mt-10 text-sm">Log Out</div>
+          <div className="mt-2 text-sm cursor-pointer" onClick={() => navigate("/login")}>
+            Log Out
+          </div>
         </nav>
 
         <footer className="absolute bottom-4 left-6 text-xs text-gray-300">

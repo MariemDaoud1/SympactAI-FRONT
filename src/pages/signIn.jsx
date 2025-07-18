@@ -69,7 +69,7 @@ export default function SignInPage() {
 
           {/* Submit Button */}
           <button
-            type="submit"
+            type="submit" onClick={() => navigate('/home')}
             className="bg-[#6c88e8] text-white px-6 py-2 rounded-full w-full hover:bg-[#f44336] transition-colors duration-300"
           >
             SIGN IN

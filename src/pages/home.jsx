@@ -1,14 +1,26 @@
 import React, { useState, useEffect } from "react";
+import { Link, useLocation,useNavigate } from "react-router-dom";
 import { Bell, Search, Power, TrendingUp, AlertTriangle, CheckCircle, Zap } from "lucide-react";
 
 export default function HomePage() {
+
   const [notifications, setNotifications] = useState(3);
-  const [activeTab, setActiveTab] = useState('Home');
   const [pumpData, setPumpData] = useState([
     { name: "Centrifugal Pump 1", id: "CP-12036", line: 3, status: "OFF", pressure: 4.99, temp: "220°C", flow: "128.6", vibration: "87.3" },
     { name: "Centrifugal Pump 2", id: "CP-12037", line: 2, status: "ON", pressure: 5.12, temp: "222°C", flow: "132.4", vibration: "92.1" },
   ]);
   const [currentTime, setCurrentTime] = useState(new Date());
+
+  const location = useLocation();
+  const currentPath = location.pathname;
+  const navigate = useNavigate();
+
+  const navItemsManage = ["Home", "Analytics", "Monitoring", "Alerts"];
+
+  const handleNavigation = (label) => {
+    const path = "/" + label.toLowerCase().replace(/\s+/g, "-");
+    navigate(path);
+  };
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -33,24 +45,26 @@ export default function HomePage() {
       <aside className="w-64 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 text-white p-6 shadow-xl">
         <div className="text-3xl font-bold mb-10">
           <div className="flex items-center gap-2 hover:scale-105 transition-transform cursor-pointer">
-            <div className="bg-white text-blue-800 px-2 py-1 rounded-full font-black animate-pulse"><img src="/public/logo.png" alt="" /></div>
+            <div className="bg-white text-blue-800 px-2 py-1 rounded-full font-black animate-pulse">
+              <img src="/public/logo.png" alt="" />
+            </div>
           </div>
         </div>
 
         <nav className="space-y-2">
           <p className="text-sm text-gray-300 mb-2">Manage</p>
-          {['Home', 'Analytics', 'Monitoring', 'Alerts'].map((item) => (
-            <div
+          {navItemsManage.map((item) => (
+            <button
               key={item}
-              onClick={() => setActiveTab(item)}
-              className={`py-2 px-4 rounded-md cursor-pointer transition-all duration-200 ${
-                activeTab === item 
-                  ? 'bg-white text-blue-800 font-semibold transform scale-105 shadow-lg' 
-                  : 'hover:bg-blue-700 hover:transform hover:translate-x-1'
+              onClick={() => handleNavigation(item)}
+              className={`w-full text-left py-2 px-4 rounded-md transition ${
+                item === "Home"
+                  ? "bg-white text-[#1e3a8a] font-semibold"
+                  : "hover:bg-blue-700"
               }`}
             >
               {item}
-            </div>
+            </button>
           ))}
 
           <p className="text-sm text-gray-300 mt-6 mb-2">Preferences</p>
@@ -60,11 +74,11 @@ export default function HomePage() {
             </div>
           ))}
 
-          <div className="mt-10 text-sm cursor-pointer hover:text-red-300 transition-colors">Log Out</div>
+          <div className="mt-2 text-sm cursor-pointer hover:text-red-300 transition-colors">Log Out</div>
         </nav>
 
         <footer className="absolute bottom-4 left-6 text-xs text-gray-300">
-          Navigations © all rights reserved
+          PumpWatch © all rights reserved 2024
         </footer>
       </aside>
 

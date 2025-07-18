@@ -5,6 +5,8 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import HomePage from "./pages/home";
 import AnalyticsPage from "./pages/analytics";
 import MonitoringPage from "./pages/monitoring";
+import AlertsPage from "./pages/alerts";
+import ChatbotPage from "./pages/chatbot";
 
 function App() {
   return (
@@ -16,6 +18,8 @@ function App() {
         <Route path="/home" element={<HomePage />} />
         <Route path="/analytics/*" element={<AnalyticsPage />} />
         <Route path="/monitoring" element={<MonitoringPage />} />
+        <Route path="/alerts" element={<AlertsPage />} />
+        <Route path="/chatbot" element={<ChatbotPage/>} />
         {/* Redirect unknown paths to landing */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

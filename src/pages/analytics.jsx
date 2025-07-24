@@ -39,7 +39,7 @@ export default function AnalyticsPage() {
         <div className="text-3xl font-bold mb-10">
           <div className="flex items-center gap-2 hover:scale-105 transition-transform cursor-pointer">
             <div className="bg-white text-blue-800 px-2 py-1 rounded-full font-black animate-pulse">
-              <img src="/public/logo.png" alt="" />
+              <img src="/logo.png" alt="" />
             </div>
           </div>
         </div>

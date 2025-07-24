@@ -1,22 +1,21 @@
 import React from "react";
-import { Bell, User, ChevronLeft, FileText, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 export default function AlertsPage() {
-    const navigate = useNavigate();
-    const navItemsManage = ["Home", "Analytics", "Monitoring", "Alerts"];
-    const navItemsPreferences = ["Settings", "Help", "Our Service Providers"];
+  const navigate = useNavigate();
+  const navItemsManage = ["Home", "Analytics", "Monitoring", "Alerts"];
+  const navItemsPreferences = ["Settings", "Help", "Our Service Providers"];
 
-    const handleNavigation = (label) => {
-      const path = "/" + label.toLowerCase().replace(/\s+/g, "-");
-      navigate(path);
-      };
+  const handleNavigation = (label) => {
+    const path = "/" + label.toLowerCase().replace(/\s+/g, "-");
+    navigate(path);
+  };
 
   return (
-    <div className="flex h-screen font-sans">
+    <div className="flex h-screen font-sans text-sm">
       {/* Sidebar */}
       <aside className="w-64 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 text-white p-6">
-       <div className="text-3xl font-bold mb-10">
+        <div className="text-3xl font-bold mb-10">
           <div className="flex items-center gap-2 hover:scale-105 transition-transform cursor-pointer">
             <div className="bg-white text-blue-800 px-2 py-1 rounded-full font-black animate-pulse">
               <img src="/public/logo.png" alt="" />
@@ -65,121 +64,164 @@ export default function AlertsPage() {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto bg-gray-100">
+      <div className="flex-1 bg-white overflow-y-auto px-8 py-4">
         {/* Header */}
-        <header className="flex items-center justify-between bg-white p-4 shadow">
-          <h1 className="text-xl font-semibold">Welcome Back, username!</h1>
+        <div className="flex items-center justify-between border-b pb-4">
+          <div>
+            <h2 className="text-2xl font-semibold">Welcome Back, username!</h2>
+            <p className="text-gray-500 text-sm">
+              Here's what's happening with your pumps!
+            </p>
+          </div>
           <div className="flex items-center gap-4">
-            <Bell className="w-5 h-5 text-gray-600" />
+            <button className="text-xl">🔍</button>
+            <button className="text-xl">🔔</button>
             <div className="flex items-center gap-2">
-              <User className="w-6 h-6 text-gray-600" />
-              <span className="text-gray-800 text-sm">username</span>
+              <img
+                src="/username.jpg"
+                className="w-10 h-10 rounded-full object-cover"
+                alt="User"
+              />
+              <div className="text-sm">
+                <p>username</p>
+                <p className="text-gray-400 text-xs">ID 02943</p>
+              </div>
+              <span className="text-lg">▾</span>
             </div>
           </div>
-        </header>
+        </div>
 
-        {/* Alerts Summary */}
-        <section className="p-6">
+        {/* Alerts Table Section */}
+        <section className="mt-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-bold">Check Out Your Latest Alerts</h2>
-            <button className="bg-blue-600 text-white text-sm px-3 py-1 rounded">
+            <div>
+              <h3 className="text-xl font-semibold">Check Out Your Latest Alerts</h3>
+              <p className="text-gray-500 text-sm">
+                Select an element to view more details or to generate a summary
+                report
+              </p>
+            </div>
+            <button className="bg-[#3A60FF] text-white px-4 py-1 rounded-md">
               Saturday 16 November 2024
             </button>
           </div>
 
-          <div className="mt-4 bg-white rounded-lg shadow p-4 overflow-x-auto">
-            <table className="w-full text-sm text-left">
-              <thead className="text-gray-500 border-b">
-                <tr>
-                  <th className="p-2">Pump Name</th>
-                  <th className="p-2">ID</th>
-                  <th className="p-2">Date</th>
-                  <th className="p-2">Time</th>
-                  <th className="p-2">Status</th>
-                  <th className="p-2">Pressure</th>
-                  <th className="p-2">Vibration</th>
-                  <th className="p-2">Temperature</th>
+          <div className="mt-4 text-sm">
+            <div className="flex justify-between text-[#3A60FF] font-semibold border-b pb-2">
+              <span>Latest Pumps Errors</span>
+              <span className="text-gray-400 font-normal">Latest Update 30 Sec Ago</span>
+            </div>
+            <table className="w-full mt-2 text-left border-collapse">
+              <thead>
+                <tr className="text-gray-500 border-b">
+                  <th className="py-2">Pump Name</th>
+                  <th>ID</th>
+                  <th>Line</th>
+                  <th>Status</th>
+                  <th>Pressure</th>
+                  <th>Temperature</th>
+                  <th>Flow</th>
+                  <th>Vibration</th>
                 </tr>
               </thead>
               <tbody>
-                <tr className="bg-red-50">
-                  <td className="p-2">CP-12398</td>
-                  <td className="p-2">12398</td>
-                  <td className="p-2">10 Nov</td>
-                  <td className="p-2">11:21PM</td>
-                  <td className="p-2 text-red-500 font-bold">Error</td>
-                  <td className="p-2">17 PSI</td>
-                  <td className="p-2">9.3</td>
-                  <td className="p-2 text-red-600">121°C</td>
-                </tr>
-                {/* Add more rows as needed */}
+                {[
+                  ["Centrifugal Pump 1", "CP-12398", 1, "On", "2 PSI", "365 K", "1.2 kg/s", "0.05 pk"],
+                  ["Centrifugal Pump 2", "CP-12376", 1, "MT", "3 PSI", "365 K", "1.2 kg/s", "0.17 pk"],
+                  ["Membrane Pump 1", "MP-2356", 3, "Off", "-", "-", "-", "-"],
+                  ["Centrifugal Pump 3", "CP-3451", 1, "Off", "-", "-", "-", "-"],
+                  ["Centrifugal Pump 4", "CP-4218", 5, "On", "2 PSI", "265 K", "1.2 kg/s", "0.12 pk"],
+                  ["Lobe Pump 1", "LP-12398", 1, "On", "2 PSI", "365 K", "1.2 kg/s", "0.05 pk"],
+                  ["Piston Pump 2", "PP-12376", 1, "MT", "3 PSI", "365 K", "1.2 kg/s", "0.17 pk"],
+                ].map((row, idx) => (
+                  <tr key={idx} className="border-b">
+                    {row.map((cell, i) => {
+                      if (i === 0) {
+                        // Pump name clickable
+                        return (
+                          <td key={i} className="py-2">
+                            <button
+                              onClick={() => navigate(`/pumps/${row[1].toLowerCase()}`)}
+                              className="text-[#3A60FF] hover:underline focus:outline-none"
+                              type="button"
+                            >
+                              {cell}
+                            </button>
+                          </td>
+                        );
+                      }
+                      return (
+                        <td
+                          key={i}
+                          className={`py-2 ${
+                            i === 3 && cell === "Off"
+                              ? "text-red-500"
+                              : i === 3 && cell === "MT"
+                              ? "text-orange-500"
+                              : i === 3 && cell === "On"
+                              ? "text-green-500"
+                              : i === 7 && parseFloat(cell) > 0.15
+                              ? "text-red-500"
+                              : ""
+                          }`}
+                        >
+                          {cell}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
+        </section>
 
-          {/* Actions and Previous Reports */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
-            <div className="bg-white shadow rounded-lg p-4">
-              <h3 className="font-bold text-sm mb-2">Actions Required</h3>
-              <p className="text-blue-600 font-semibold text-lg">Current Status: Error</p>
-              <p className="text-sm text-gray-500 mt-2">Temperature Spike detected in Pump CP-12398</p>
+        {/* Bottom Cards Section */}
+        <section className="mt-8">
+          <h3 className="text-lg font-semibold mb-4">Actions Required !</h3>
+          <div className="grid grid-cols-3 gap-4">
+            <div className="bg-gradient-to-br from-[#48C6EF] to-[#6F86D6] p-4 rounded-xl text-white">
+              <p className="text-xs">Current Pumps ON</p>
+              <p className="text-2xl font-bold mt-2">7</p>
+              <p className="text-sm">of 10 Total</p>
+              <div className="mt-4 bg-white h-2 w-full rounded-full">
+                <div className="bg-blue-500 h-2 rounded-full w-[70%]"></div>
+              </div>
             </div>
-            <div className="bg-white shadow rounded-lg p-4 md:col-span-2">
-              <h3 className="font-bold text-sm mb-2">View or Download Previous Reports</h3>
-              <div className="grid grid-cols-2 gap-2">
-                {[...Array(4)].map((_, i) => (
-                  <div
-                    key={i}
-                    className="border p-2 rounded text-xs flex items-center gap-2 hover:bg-gray-100 cursor-pointer"
-                  >
-                    <FileText size={14} /> Report_{i + 1}.pdf
+            <div className="bg-gradient-to-br from-[#FF5858] to-[#FB8E5A] p-4 rounded-xl text-white">
+              <p className="text-xs">MP-2146 Temperature Spike!</p>
+              <p className="text-2xl font-bold mt-2">751 K</p>
+              <p className="text-sm">
+                Temperature Crossed the Limit (500 / 600 K)
+              </p>
+            </div>
+
+            {/* Latest Reports */}
+            <div className="col-span-1">
+              <h4 className="font-semibold">View or Download Previous Reports</h4>
+              <div className="grid grid-cols-2 gap-2 mt-2">
+                {[
+                  ["CP-12398 Report", "10 November 2024", "9pm"],
+                  ["CP-12376 Report", "10 November 2024", "10pm"],
+                  ["DP-2356 Report", "11 November 2024", "11pm"],
+                  ["VP-2356 Report", "12 November 2024", "11pm"],
+                ].map(([title, date, time], i) => (
+                  <div key={i} className="bg-gray-100 rounded-md p-2 text-xs">
+                    <img
+                      src="/report-thumb.jpg"
+                      alt="Report"
+                      className="rounded mb-1"
+                    />
+                    <p className="font-semibold">{title}</p>
+                    <p>{date}</p>
+                    <p>{time}</p>
                   </div>
                 ))}
               </div>
             </div>
           </div>
         </section>
-
-        {/* Detailed Alert Page */}
-        <section className="p-6 pt-0">
-          <div className="flex items-center gap-2 mb-2">
-            <ChevronLeft className="w-5 h-5 text-blue-600" />
-            <h2 className="text-lg font-bold">CP-12398 System Failure</h2>
-          </div>
-
-          <p className="text-sm text-gray-500 mb-2">Pump System Failure CP-12398 - 10 November 2024</p>
-
-          <div className="bg-white shadow rounded-lg p-4">
-            <h3 className="font-semibold mb-1">CP-12398 System Failure Recap</h3>
-            <p className="text-sm text-gray-600">
-              The pump experienced a failure due to an abnormal rise in temperature, likely caused by excessive friction
-              or a cooling system malfunction.
-            </p>
-            <p className="text-sm text-gray-600 mt-1">
-              <strong>Temperature Spike:</strong> Temperature rose above the operational threshold, triggering a shutdown
-              to prevent damage.
-            </p>
-            <button className="mt-4 bg-blue-600 text-white px-3 py-1 rounded text-sm">
-              Generate Detailed Report
-            </button>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-              {/* Chart placeholders */}
-              {["Temp. Values", "Line Pressure", "Vibration", "Flow Rate"].map((title, index) => (
-                <div
-                  key={index}
-                  className="border rounded-md p-4 bg-gray-50 text-sm text-center text-gray-600"
-                >
-                  <p className="mb-2 font-semibold">{title} CP-12398 (10/11/24 - 11:21 PM)</p>
-                  <div className="h-32 bg-white border-dashed border-2 border-gray-300 flex items-center justify-center">
-                    Chart Placeholder
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      </main>
+      </div>
     </div>
   );
 }

@@ -1,9 +1,30 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation,useNavigate } from "react-router-dom";
 import { Bell, Search, Power, TrendingUp, AlertTriangle, CheckCircle, Zap } from "lucide-react";
+import {
+  Home,
+  BarChart,
+  Monitor,
+  Settings,
+  HelpCircle,
+  LogOut,
+} from "lucide-react";
 
 export default function HomePage() {
 
+  const currentPath = window.location.pathname;
+    const [selectedPump, setSelectedPump] = useState("Centrifugal Pump 1 (CP-12398)");
+    const manageRoutes = {
+      Home: "/home",
+      Analytics: "/analytics",
+      Monitoring: "/monitoring",
+      Alerts: "/alerts",
+    };
+    const prefRoutes = {
+      Settings: "/settings",
+      Help: "/help",
+      "Our Service Providers": "/providers",
+    };
   const [notifications, setNotifications] = useState(3);
   const [pumpData, setPumpData] = useState([
     { name: "Centrifugal Pump 1", id: "CP-12036", line: 3, status: "OFF", pressure: 4.99, temp: "220°C", flow: "128.6", vibration: "87.3" },
@@ -11,8 +32,6 @@ export default function HomePage() {
   ]);
   const [currentTime, setCurrentTime] = useState(new Date());
 
-  const location = useLocation();
-  const currentPath = location.pathname;
   const navigate = useNavigate();
 
   const navItemsManage = ["Home", "Analytics", "Monitoring", "Alerts"];
@@ -42,46 +61,89 @@ export default function HomePage() {
   return (
     <div className="flex min-h-screen font-sans bg-gray-100">
       {/* Sidebar */}
-      <aside className="w-64 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 text-white p-6 shadow-xl">
-        <div className="text-3xl font-bold mb-10">
-          <div className="flex items-center gap-2 hover:scale-105 transition-transform cursor-pointer">
-            <div className="bg-white text-blue-800 px-2 py-1 rounded-full font-black animate-pulse">
-              <img src="/public/logo.png" alt="" />
+            <aside className="w-64 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 text-white p-6 flex flex-col justify-between">
+            <div>
+              {/* Logo Header */}
+                <div className="bg-white text-blue-800 px-2 py-1 rounded-full font-black animate-pulse">
+                    <img src="/public/logo.png" alt="" />
+                  </div>
+      
+                {/* Navigation */}
+      
+              <nav className="space-y-6">
+                <div>
+                  <p className="text-sm text-gray-400 mb-1">Manage</p>
+                  <ul className="space-y-3">
+                    {Object.entries(manageRoutes).map(([label, path]) => {
+                      const isActive = currentPath === path;
+                      const Icon =
+                        label === "Home"
+                          ? Home
+                          : label === "Analytics"
+                          ? BarChart
+                          : label === "Monitoring"
+                          ? Monitor
+                          : AlertTriangle;
+      
+                      return (
+                        <li
+                          key={label}
+                          onClick={() => navigate(path)}
+                          className={`flex items-center gap-3 cursor-pointer ${
+                            isActive ? "text-blue-300 font-bold" : "hover:text-blue-400"
+                          }`}
+                        >
+                          <Icon className="w-5 h-5" />
+                          {label}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+      
+                <div>
+                  <p className="text-sm text-gray-400 mt-6 mb-1">Preferences</p>
+                  <ul className="space-y-3">
+                    {Object.entries(prefRoutes).map(([label, path]) => {
+                      const isActive = currentPath === path;
+                      const Icon =
+                        label === "Settings"
+                          ? Settings
+                          : label === "Help"
+                          ? HelpCircle
+                          : HelpCircle;
+      
+                      return (
+                        <li
+                          key={label}
+                          onClick={() => navigate(path)}
+                          className={`flex items-center gap-3 cursor-pointer ${
+                            isActive ? "text-blue-300 font-bold" : "hover:text-blue-400"
+                          }`}
+                        >
+                          <Icon className="w-5 h-5" />
+                          {label}
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              </nav>
             </div>
-          </div>
-        </div>
-
-        <nav className="space-y-2">
-          <p className="text-sm text-gray-300 mb-2">Manage</p>
-          {navItemsManage.map((item) => (
-            <button
-              key={item}
-              onClick={() => handleNavigation(item)}
-              className={`w-full text-left py-2 px-4 rounded-md transition ${
-                item === "Home"
-                  ? "bg-white text-[#1e3a8a] font-semibold"
-                  : "hover:bg-blue-700"
-              }`}
-            >
-              {item}
-            </button>
-          ))}
-
-          <p className="text-sm text-gray-300 mt-6 mb-2">Preferences</p>
-          {['Settings', 'Help', 'Our Service Providers'].map((item) => (
-            <div key={item} className="py-2 px-4 rounded-md hover:bg-blue-700 cursor-pointer transition-all duration-200 hover:transform hover:translate-x-1">
-              {item}
+      
+            <div>
+              <div
+                onClick={() => navigate("/login")}
+                className="flex items-center gap-3 cursor-pointer hover:text-red-400"
+              >
+                <LogOut className="w-5 h-5" />
+                Log Out
+              </div>
+              <p className="text-[10px] mt-4 text-gray-400">
+                PumpWatch all rights reserved 2024
+              </p>
             </div>
-          ))}
-
-          <div className="mt-2 text-sm cursor-pointer hover:text-red-300 transition-colors">Log Out</div>
-        </nav>
-
-        <footer className="absolute bottom-4 left-6 text-xs text-gray-300">
-          PumpWatch © all rights reserved 2024
-        </footer>
-      </aside>
-
+          </aside>
       {/* Main content */}
       <main className="flex-1 p-8">
         <header className="flex items-center justify-between mb-8">

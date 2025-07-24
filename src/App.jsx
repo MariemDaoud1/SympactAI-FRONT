@@ -8,6 +8,7 @@ import MonitoringPage from "./pages/monitoring";
 import ChatbotPage from "./pages/chatbot";
 import AlertsPage from "./pages/alerts";
 import PumpAlertsPage from "./pages/pumpalerts";
+import ReportPage from "./pages/report";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path="/chatbot" element={<ChatbotPage/>} />
         <Route path="/alerts" element={<AlertsPage />} />
         <Route path="/pumpalerts" element={<PumpAlertsPage />} />
+        <Route path="/report" element={<ReportPage />} />
         {/* Redirect unknown paths to landing */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

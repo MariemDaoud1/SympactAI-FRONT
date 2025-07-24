@@ -5,10 +5,10 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import HomePage from "./pages/home";
 import AnalyticsPage from "./pages/analytics";
 import MonitoringPage from "./pages/monitoring";
-import ChatbotPage from "./pages/chatbot";
 import AlertsPage from "./pages/alerts";
 import PumpAlertsPage from "./pages/pumpalerts";
 import ReportPage from "./pages/report";
+import PumpOChatbotPage from "./pages/chatbot"; // Assuming this is the correct import path for the chatbot page
 
 function App() {
   return (
@@ -20,10 +20,10 @@ function App() {
         <Route path="/home" element={<HomePage />} />
         <Route path="/analytics/*" element={<AnalyticsPage />} />
         <Route path="/monitoring" element={<MonitoringPage />} />
-        <Route path="/chatbot" element={<ChatbotPage/>} />
         <Route path="/alerts" element={<AlertsPage />} />
         <Route path="/pumpalerts" element={<PumpAlertsPage />} />
         <Route path="/report" element={<ReportPage />} />
+        <Route path="/chatbot" element={<PumpOChatbotPage />} />
         {/* Redirect unknown paths to landing */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

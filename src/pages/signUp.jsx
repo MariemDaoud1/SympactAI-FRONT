@@ -1,10 +1,67 @@
 import React, { useState } from 'react';
 import { User, Lock, Mail } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 
 export default function SignUpPage() {
-  const [rememberMe, setRememberMe] = useState(false);
     const navigate = useNavigate();
+  // Handle form submission
+  const [email, setEmail] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [password, setPassword] = useState('');
+  const [companyId, setCompanyId] = useState('123456');
+  const [role, setRole] = useState('technician');
+  const [rememberMe, setRememberMe] = useState(false);
+  const [companies, setCompanies] = useState([]);
+
+  useEffect(() => {
+  async function fetchCompanies() {
+    try {
+      const res = await fetch('/api/companies');
+      const data = await res.json();
+      setCompanies(data);
+    } catch (err) {
+      console.error('Failed to load companies:', err);
+    }
+  }
+
+  fetchCompanies();
+}, []);
+
+
+  // Fonction déclenchée à l'envoi du formulaire
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // Empêche le rechargement de la page
+
+    try {
+      const res = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email,
+          firstName,
+          lastName,
+          password,
+          companyId,
+          role,
+          rememberMe,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        alert('Inscription réussie !');
+        navigate('/signin'); // redirection vers la page connexion
+      } else {
+        alert(data.errors?.[0]?.msg || data.message || 'Erreur lors de l’inscription');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Erreur serveur');
+    }
+  };
 
   return (
     <div className="flex h-screen animate-fadeIn">
@@ -34,7 +91,7 @@ export default function SignUpPage() {
 
       {/* Right side form */}
       <div className="w-2/3 flex items-center justify-center bg-white animate-slideInRight">
-        <form className="w-[350px] animate-fadeUp transition-all duration-700 ease-in-out space-y-4">
+        <form onSubmit={handleSubmit} className="w-[350px] animate-fadeUp transition-all duration-700 ease-in-out space-y-4">
           {/* Logo Placeholder */}
           <div className="flex justify-center mb-4">
             <div className="w-75 h-75 rectangle-full bg-white-200 flex items-center justify-center text-white-500 text-sm font-semibold ">
@@ -42,32 +99,55 @@ export default function SignUpPage() {
             </div>
           </div>
 
-          {/* Email */}
+          <div className="flex gap-4">
+          {/* firstName */}
           <div>
             <label className="flex items-center gap-2 text-sm text-gray-800">
+              <User size={16} />
+              <span>FirstName</span>
+            </label>
+            <input
+              type="text"
+              placeholder="FirstName"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              required
+              className="w-full border-b border-gray-400 focus:outline-none mt-1 focus:border-[#f44336] placeholder:text-gray-400 text-sm transition-colors"
+            />
+          </div>
+          {/* lastname */}
+          <div>
+            <label className="flex items-center gap-2 text-sm text-gray-800">
+              <User size={16} />
+              <span>LastName</span>
+            </label>
+            <input
+              type="text"
+              placeholder="LastName"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              required
+              className="w-full border-b border-gray-400 focus:outline-none mt-1 focus:border-[#f44336] placeholder:text-gray-400 text-sm transition-colors"
+            />
+          </div>
+          </div>
+
+          {/* Email */}
+          <div>
+            <label className="flex items-center gap-2 text-sm text-gray-800 ">
               <Mail size={16} />
               <span>Email</span>
             </label>
             <input
               type="email"
               placeholder="email@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
               className="w-full border-b border-gray-400 focus:outline-none mt-1 focus:border-[#f44336] placeholder:text-gray-400 text-sm transition-colors"
             />
           </div>
-
-          {/* Username */}
-          <div>
-            <label className="flex items-center gap-2 text-sm text-gray-800">
-              <User size={16} />
-              <span>Username</span>
-            </label>
-            <input
-              type="text"
-              placeholder="yourname"
-              className="w-full border-b border-gray-400 focus:outline-none mt-1 focus:border-[#f44336] placeholder:text-gray-400 text-sm transition-colors"
-            />
-          </div>
-
+          
           {/* Password */}
           <div>
             <label className="flex items-center gap-2 text-sm text-gray-800">
@@ -77,35 +157,62 @@ export default function SignUpPage() {
             <input
               type="password"
               placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
               className="w-full border-b border-gray-400 focus:outline-none mt-1 focus:border-[#f44336] placeholder:text-gray-400 text-sm transition-colors"
             />
           </div>
 
-          {/* Confirm Password */}
-          <div>
-            <label className="flex items-center gap-2 text-sm text-gray-800">
-              <Lock size={16} />
-              <span>Confirm</span>
-            </label>
-            <input
-              type="password"
-              placeholder="••••••••"
-              className="w-full border-b border-gray-400 focus:outline-none mt-1 focus:border-[#f44336] placeholder:text-gray-400 text-sm transition-colors"
-            />
-          </div>
 
-          {/* Remember me */}
-          <div className="flex items-center justify-between text-sm text-gray-600">
-            <label className="flex items-center">
-              <input
-                type="checkbox"
-                checked={rememberMe}
-                onChange={() => setRememberMe(!rememberMe)}
-                className="mr-2 accent-[#f44336]"
-              />
-              Remember Me
-            </label>
-          </div>
+          {/* Role */}
+<div className="mb-4">
+  <label className="block text-gray-800 text-sm font-medium mb-1">
+    Role
+  </label>
+  <select
+    className="w-full border-b border-gray-400 focus:outline-none text-sm placeholder:text-gray-400 transition-colors"
+    value={role}
+    onChange={(e) => setRole(e.target.value)}
+    required
+  >
+    <option value="technician">Technician</option>
+    <option value="inspector">Inspector</option>
+    <option value="admin">Admin</option>
+  </select>
+</div>
+
+{/* Company ID */}
+<label className="block text-gray-800 text-sm font-medium mb-1">
+  Company
+</label>
+<select
+  className="w-full border-b border-gray-400 focus:outline-none text-sm"
+  value={companyId}
+  onChange={(e) => setCompanyId(e.target.value)}
+  required
+>
+  <option value="">Select a company</option>
+  {companies.map((company) => (
+    <option key={company._id} value={company._id}>
+      {company.name}
+    </option>
+  ))}
+</select>
+
+
+{/* Remember Me */}
+<div className="mb-4">
+  <label className="flex items-center text-sm text-gray-800">
+    <input
+      type="checkbox"
+      checked={rememberMe}
+      onChange={() => setRememberMe(!rememberMe)}
+      className="mr-2 accent-[#f44336]"
+    />
+    Remember Me
+  </label>
+</div>
 
           {/* Submit Button */}
           <button

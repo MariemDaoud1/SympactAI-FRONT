@@ -1,19 +1,20 @@
-import LandingPage from "./pages/landing";
-import SignInPage from "./pages/signin";
-import SignUpPage from "./pages/signUp";
+import LandingPage from "./templates/landing";
+import SignInPage from "./templates/signIn";
+import SignUpPage from "./templates/signUp";
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import HomePage from "./pages/home";
-import AnalyticsPage from "./pages/analytics";
-import MonitoringPage from "./pages/monitoring";
-import AlertsPage from "./pages/alerts";
-import PumpAlertsPage from "./pages/pumpalerts";
-import ReportPage from "./pages/report";
-import PumpOChatbotPage from "./pages/chatbot"; // Assuming this is the correct import path for the chatbot page
-
+import HomePage from "./templates/home";
+import AnalyticsPage from "./templates/analytics";
+import MonitoringPage from "./templates/monitoring";
+import AlertsPage from "./templates/alerts";
+import PumpAlertsPage from "./templates/pumpalerts";
+import ReportPage from "./templates/report";
+import PumpOChatbotPage from "./templates/chatbot"; 
+import ChartDetails from "./templates/ChartDetails";
 function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/monitoring/:chartId" element={<ChartDetails />} />
         <Route path="/" element={<LandingPage/>} />
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/signin" element={<SignInPage />} />

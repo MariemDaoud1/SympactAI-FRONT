@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import VoiceInputComponent from "./VoiceInput";
 import {
   Home,
   BarChart,
@@ -194,11 +195,11 @@ export default function AnalyticsPage() {
         </section>
 
         <div className="bg-gradient-to-br from-purple-200 to-blue-100 p-6 rounded-xl shadow-md">
-          <h3 className="font-semibold text-lg mb-4">
+          {/* <h3 className="font-semibold text-lg mb-4">
             Prediction with Operation States - {selectedQuarter}
-          </h3>
-          <div className="h-64 bg-white rounded-md flex items-center justify-center text-gray-500">
-            [Line Chart Placeholder]
+          </h3> */}
+          <div className="h-180 bg-white rounded-md flex items-center justify-center text-gray-500">
+            <VoiceInputComponent/>
           </div>
         </div>
       </main>

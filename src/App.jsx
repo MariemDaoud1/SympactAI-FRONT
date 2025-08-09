@@ -1,14 +1,14 @@
-import LandingPage from "./templates/landing";
+import LandingPage from "./templates/Landing";
 import SignInPage from "./templates/signIn";
 import SignUpPage from "./templates/signUp";
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import HomePage from "./templates/home";
-import AnalyticsPage from "./templates/analytics";
-import MonitoringPage from "./templates/monitoring";
-import AlertsPage from "./templates/alerts";
-import PumpAlertsPage from "./templates/pumpalerts";
-import ReportPage from "./templates/report";
-import PumpOChatbotPage from "./templates/chatbot"; 
+import HomePage from "./templates/Home";
+import AnalyticsPage from "./templates/Analytics";
+import MonitoringPage from "./templates/Monitoring";
+import AlertsPage from "./templates/Alerts";
+import PumpAlertsPage from "./templates/PumpAlerts";
+import ReportPage from "./templates/Report";
+import PumpOChatbotPage from "./templates/Chatbot"; 
 import ChartDetails from "./templates/ChartDetails";
 function App() {
   return (

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import Papa from "papaparse";
 import {
   LineChart,
@@ -12,13 +12,17 @@ import {
 } from "recharts";
 import SidebarComponent from "./Sidebar";
 import HeaderComponent from "./Header";
+import ChatbotButtonComponent from "./ChatbotButton";
 
 export default function MonitoringPage() {
   const navigate = useNavigate();
-  const currentPath = window.location.pathname;
+  const location = useLocation();
+
+  const currentPath = location.pathname;
+
   const allOption = "Show All Pumps";
 
-  const [selectedPump, setSelectedPump] = useState("Show All Pumps");
+  const [selectedPump, setSelectedPump] = useState(allOption);
   const [data, setData] = useState([]);
   const [allPumpData, setAllPumpData] = useState({});
 
@@ -30,32 +34,39 @@ export default function MonitoringPage() {
 
   useEffect(() => {
     if (selectedPump === allOption) {
-      // Clear previous states
       setData([]);
-      setAllPumpData({});
+      const allData = {};
 
-      // Fetch all CSVs
-      Object.entries(pumpCsvMap).forEach(([pumpName, csvFile]) => {
-        fetch(csvFile)
-          .then((res) => res.text())
-          .then((csvText) => {
-            Papa.parse(csvText, {
-              header: true,
-              dynamicTyping: true,
-              complete: (results) => {
-                const cleaned = results.data.filter(
-                  (row) => row.timestamp && row.sensor_avg !== undefined
-                );
-                setAllPumpData((prev) => ({
-                  ...prev,
-                  [csvFile]: cleaned, // Use csvFile as chartId
-                }));
-              },
-            });
-          });
+      Promise.all(
+        Object.entries(pumpCsvMap).map(([pumpName, csvFile]) =>
+          fetch(csvFile)
+            .then((res) => res.text())
+            .then(
+              (csvText) =>
+                new Promise((resolve) =>
+                  Papa.parse(csvText, {
+                    header: true,
+                    dynamicTyping: true,
+                    complete: (results) => {
+                      const cleaned = results.data.filter(
+                        (row) =>
+                          row.timestamp !== undefined &&
+                          row.timestamp !== null &&
+                          row.sensor_avg !== undefined
+                      );
+                      resolve([csvFile, cleaned]);
+                    },
+                  })
+                )
+            )
+        )
+      ).then((results) => {
+        results.forEach(([csvFile, cleaned]) => {
+          allData[csvFile] = cleaned;
+        });
+        setAllPumpData(allData);
       });
     } else {
-      // Fetch only selected pump CSV
       const csvFile = pumpCsvMap[selectedPump];
       fetch(csvFile)
         .then((res) => res.text())
@@ -65,7 +76,10 @@ export default function MonitoringPage() {
             dynamicTyping: true,
             complete: (results) => {
               const cleaned = results.data.filter(
-                (row) => row.timestamp && row.sensor_avg !== undefined
+                (row) =>
+                  row.timestamp !== undefined &&
+                  row.timestamp !== null &&
+                  row.sensor_avg !== undefined
               );
               setData(cleaned);
             },
@@ -93,15 +107,15 @@ export default function MonitoringPage() {
   return (
     <div className="flex h-screen font-sans bg-[#f7f9fc]">
       <SidebarComponent
-              currentPath={currentPath}
-              manageRoutes={manageRoutes}
-              prefRoutes={prefRoutes}
-            />
+        currentPath={currentPath}
+        manageRoutes={manageRoutes}
+        prefRoutes={prefRoutes}
+      />
 
       {/* Main content */}
       <main className="flex-1 bg-white overflow-y-auto px-8 py-4">
         {/* Header */}
-            <HeaderComponent username="username" userId="02943" />
+        <HeaderComponent username="username" userId="02943" />
 
         <div className="flex justify-between items-center mt-4">
           <h2 className="text-2xl font-bold text-[#1e3a8a]">
@@ -153,7 +167,7 @@ export default function MonitoringPage() {
             ? Object.entries(allPumpData).map(([csvFile, pumpData]) => (
                 <ChartCard
                   key={csvFile}
-                  title={`Live Sensor Average - ${csvFile}`}
+                  title={`Live Sensor Average - ${cleanChartId(csvFile)}`}
                   chartId={csvFile}
                   data={pumpData}
                 />
@@ -167,6 +181,9 @@ export default function MonitoringPage() {
             )}
         </section>
       </main>
+
+      {/* Reusable Chatbot Button */}
+      <ChatbotButtonComponent />
     </div>
   );
 }
@@ -198,16 +215,20 @@ function ChartCard({ title, chartId, data }) {
             <XAxis dataKey="timestamp" tick={{ fontSize: 10 }} />
             <YAxis />
             <Tooltip />
-            <Line type="monotone" dataKey="sensor_avg" stroke="#2563eb" dot={false} />
+            <Line
+              type="monotone"
+              dataKey="sensor_avg"
+              stroke="#2563eb"
+              dot={false}
+            />
           </LineChart>
         </ResponsiveContainer>
       </div>
       <button
         onClick={() => {
-    const cleanId = cleanChartId(chartId);
-    navigate(`/monitoring/${cleanId}`);
-}}
-
+          const cleanId = cleanChartId(chartId);
+          navigate(`/monitoring/${cleanId}`);
+        }}
         className="mt-3 px-4 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded"
       >
         Show More Information

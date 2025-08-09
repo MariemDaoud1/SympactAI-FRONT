@@ -3,6 +3,7 @@ import { Link, useLocation,useNavigate } from "react-router-dom";
 import { Bell, Search, Power, TrendingUp, AlertTriangle, CheckCircle, Zap } from "lucide-react";
 import SidebarComponent from "./Sidebar";
 import HeaderComponent from "./Header";
+import ChatbotButtonComponent from "./ChatbotButton";
 
 export default function HomePage() {
 
@@ -195,6 +196,8 @@ export default function HomePage() {
           </div>
         </section>
       </main>
+      {/* Reusable Chatbot Button */}
+            <ChatbotButtonComponent />
     </div>
   );
 }

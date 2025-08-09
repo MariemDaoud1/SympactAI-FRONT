@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import SidebarComponent from "./Sidebar";
 import HeaderComponent from "./Header";
+import ChatbotButtonComponent from "./ChatbotButton";
 
 export default function AlertsPage() {
   const navigate = useNavigate();
@@ -164,6 +165,8 @@ export default function AlertsPage() {
           </div>
         </section>
       </div>
+      {/* Reusable Chatbot Button */}
+      <ChatbotButtonComponent />
     </div>
   );
 }

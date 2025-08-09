@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import VoiceInputComponent from "./VoiceInput";
 import SidebarComponent from "./Sidebar";
 import HeaderComponent from "./Header";
+import ChatbotButtonComponent from "./ChatbotButton";
 
 export default function AnalyticsPage() {
   const navigate = useNavigate();
@@ -96,6 +97,9 @@ export default function AnalyticsPage() {
           </div>
         </div>
       </main>
+      {/* Reusable Chatbot Button */}
+      <ChatbotButtonComponent />
     </div>
   );
 }
+

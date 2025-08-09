@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useLocation,useNavigate } from "react-router-dom";
 import { Bell, Search, Power, TrendingUp, AlertTriangle, CheckCircle, Zap } from "lucide-react";
 import SidebarComponent from "./Sidebar";
+import HeaderComponent from "./Header";
 
 export default function HomePage() {
 
@@ -59,47 +60,12 @@ export default function HomePage() {
         prefRoutes={prefRoutes}
       />
       {/* Main content */}
-      <main className="flex-1 p-8">
-        <header className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-2xl font-semibold">Welcome Back, Username!</h1>
-            <p className="text-gray-500 text-sm">Here's what's happening with your pumps!</p>
-            <p className="text-xs text-gray-400 mt-1">
-              {currentTime.toLocaleTimeString()} - {currentTime.toLocaleDateString()}
-            </p>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <button className="rounded-full p-2 bg-gray-200 hover:bg-gray-300 transition-colors hover:scale-110 transform">
-              <Search size={20} />
-            </button>
-            <button 
-              onClick={clearNotifications}
-              className="rounded-full p-2 bg-gray-200 hover:bg-gray-300 transition-all transform hover:scale-110 relative"
-            >
-              <Bell size={20} />
-              {notifications > 0 && (
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center animate-bounce">
-                  {notifications}
-                </span>
-              )}
-            </button>
-            <div className="flex items-center gap-2 bg-gray-100 p-2 rounded-full hover:shadow-md transition-shadow">
-              <img
-                src="https://via.placeholder.com/40"
-                alt="User"
-                className="rounded-full w-10 h-10"
-              />
-              <div className="text-sm">
-                <div className="font-semibold">username</div>
-                <div className="text-gray-500">ID 0234</div>
-              </div>
-            </div>
-          </div>
-        </header>
+      <main className="flex-1 bg-white overflow-y-auto px-8 py-4">
+          {/* Header */}
+          <HeaderComponent username="username" userId="02943" />
 
         {/* Overview cards */}
-        <section className="grid grid-cols-3 gap-6 mb-8">
+        <section className="grid grid-cols-3 gap-6 mt-4">
           <OverviewCard 
             title="Predicted System Failure" 
             value="20%" 

@@ -1,6 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import SidebarComponent from "./Sidebar";
+import HeaderComponent from "./Header";
 
 export default function AlertsPage() {
   const navigate = useNavigate();
@@ -30,33 +31,10 @@ export default function AlertsPage() {
       {/* Main Content */}
       <div className="flex-1 bg-white overflow-y-auto px-8 py-4">
         {/* Header */}
-        <div className="flex items-center justify-between border-b pb-4">
-          <div>
-            <h2 className="text-2xl font-semibold">Welcome Back, username!</h2>
-            <p className="text-gray-500 text-sm">
-              Here's what's happening with your pumps!
-            </p>
-          </div>
-          <div className="flex items-center gap-4">
-            <button className="text-xl">🔍</button>
-            <button className="text-xl">🔔</button>
-            <div className="flex items-center gap-2">
-              <img
-                src="/username.jpg"
-                className="w-10 h-10 rounded-full object-cover"
-                alt="User"
-              />
-              <div className="text-sm">
-                <p>username</p>
-                <p className="text-gray-400 text-xs">ID 02943</p>
-              </div>
-              <span className="text-lg">▾</span>
-            </div>
-          </div>
-        </div>
+        <HeaderComponent username="username" userId="02943" />
 
         {/* Alerts Table Section */}
-        <section className="mt-6">
+        <section className="mt-4">
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-xl font-semibold">Check Out Your Latest Alerts</h3>

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import VoiceInputComponent from "./VoiceInput";
 import SidebarComponent from "./Sidebar";
+import HeaderComponent from "./Header";
 
 export default function AnalyticsPage() {
   const navigate = useNavigate();
@@ -45,32 +46,11 @@ export default function AnalyticsPage() {
             />
 
       {/* Main content */}
-      <main className="flex-1 p-8">
+      <main className="flex-1 bg-white overflow-y-auto px-8 py-4">
         {/* Header */}
-        <header className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-2xl font-semibold">Welcome Back, Username!</h1>
-            <p className="text-gray-500 text-sm">Here's what's happening with your pumps!</p>
-          </div>
+        <HeaderComponent username="username" userId="02943" />
 
-          <div className="flex items-center gap-4">
-            <button className="rounded-full p-2 bg-gray-200">🔍</button>
-            <button className="rounded-full p-2 bg-gray-200">🔔</button>
-            <div className="flex items-center gap-2 bg-gray-100 p-2 rounded-full">
-              <img
-                src="https://via.placeholder.com/40"
-                alt="User"
-                className="rounded-full w-10 h-10"
-              />
-              <div className="text-sm">
-                <div className="font-semibold">Username</div>
-                <div className="text-gray-500">ID 02943</div>
-              </div>
-            </div>
-          </div>
-        </header>
-
-        <section className="flex justify-between items-start mb-6">
+        <section className="flex justify-between items-start mt-4">
           <div>
             <p className="text-lg font-medium">You are now viewing the Pump ID:</p>
             <h2 className="text-2xl font-bold text-blue-900 mt-1">

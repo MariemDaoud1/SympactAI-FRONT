@@ -11,6 +11,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import SidebarComponent from "./Sidebar";
+import HeaderComponent from "./Header";
 
 export default function MonitoringPage() {
   const navigate = useNavigate();
@@ -98,32 +99,11 @@ export default function MonitoringPage() {
             />
 
       {/* Main content */}
-      <main className="flex-1 p-8">
+      <main className="flex-1 bg-white overflow-y-auto px-8 py-4">
         {/* Header */}
-        <header className="flex items-center justify-between mb-8">
-          <div>
-            <h1 className="text-2xl font-semibold text-gray-800">Welcome Back, username!</h1>
-            <p className="text-gray-500 text-sm">Here's what's happening with your pumps!</p>
-          </div>
+            <HeaderComponent username="username" userId="02943" />
 
-          <div className="flex items-center gap-4">
-            <button className="rounded-full p-2 bg-gray-200">🔍</button>
-            <button className="rounded-full p-2 bg-gray-200">🔔</button>
-            <div className="flex items-center gap-2 bg-gray-100 p-2 rounded-full">
-              <img
-                src="https://via.placeholder.com/40"
-                alt="User"
-                className="rounded-full w-10 h-10"
-              />
-              <div className="text-sm">
-                <div className="font-semibold">username</div>
-                <div className="text-gray-500">ID 02943</div>
-              </div>
-            </div>
-          </div>
-        </header>
-
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex justify-between items-center mt-4">
           <h2 className="text-2xl font-bold text-[#1e3a8a]">
             {selectedPump === allOption ? "All Pumps" : selectedPump}{" "}
             {selectedPump !== allOption && (

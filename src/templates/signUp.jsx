@@ -17,9 +17,10 @@ export default function SignUpPage() {
   useEffect(() => {
     async function fetchCompanies() {
       try {
-        const res = await fetch('http://localhost:5000/api/company'); // <- Updated URL
+        const res = await fetch('http://localhost:5000/api/company/all'); 
         const data = await res.json();
         setCompanies(data);
+        console.log('Companies loaded:', data);
       } catch (err) {
         console.error('Failed to load companies:', err);
       }

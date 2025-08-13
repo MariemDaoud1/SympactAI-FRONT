@@ -25,68 +25,107 @@ export default function MonitoringPage() {
   const [selectedPump, setSelectedPump] = useState(allOption);
   const [data, setData] = useState([]);
   const [allPumpData, setAllPumpData] = useState({});
+  const [allPumps, setAllPumps] = useState([]);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    async function fetchUser() {
+      try {
+        const res = await fetch("http://localhost:5000/api/user/profile", {
+          credentials: "include",
+        });
+        if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+        const data = await res.json();
+        setUser(data);
+        console.log("User loaded:", data);
+      } catch (err) {
+        console.error("Failed to load user profile:", err);
+      }
+    }
+    fetchUser();
+  }, []);
 
   const pumpCsvMap = {
     "Centrifugal Pump 1 (CP-12398)": "/f1PETIT.csv",
     "Centrifugal Pump 2 (CP-12399)": "/f2.csv",
     "Centrifugal Pump 3 (CP-12400)": "/f3MOY.csv",
   };
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (selectedPump === allOption) {
-      setData([]);
-      const allData = {};
-
-      Promise.all(
-        Object.entries(pumpCsvMap).map(([pumpName, csvFile]) =>
-          fetch(csvFile)
-            .then((res) => res.text())
-            .then(
-              (csvText) =>
-                new Promise((resolve) =>
-                  Papa.parse(csvText, {
-                    header: true,
-                    dynamicTyping: true,
-                    complete: (results) => {
-                      const cleaned = results.data.filter(
-                        (row) =>
-                          row.timestamp !== undefined &&
-                          row.timestamp !== null &&
-                          row.sensor_avg !== undefined
-                      );
-                      resolve([csvFile, cleaned]);
-                    },
-                  })
-                )
-            )
-        )
-      ).then((results) => {
-        results.forEach(([csvFile, cleaned]) => {
-          allData[csvFile] = cleaned;
+    async function fetchPumps() {
+      try {
+        const res = await fetch("http://localhost:5000/api/pumps", {
+          credentials: "include",
         });
-        setAllPumpData(allData);
-      });
-    } else {
-      const csvFile = pumpCsvMap[selectedPump];
-      fetch(csvFile)
-        .then((res) => res.text())
-        .then((csvText) => {
-          Papa.parse(csvText, {
-            header: true,
-            dynamicTyping: true,
-            complete: (results) => {
-              const cleaned = results.data.filter(
-                (row) =>
-                  row.timestamp !== undefined &&
-                  row.timestamp !== null &&
-                  row.sensor_avg !== undefined
-              );
-              setData(cleaned);
-            },
-          });
-        });
-      setAllPumpData({});
+        if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+        const data = await res.json();
+        setAllPumps(data);
+        console.log("Pumps loaded:", data);
+      } catch (err) {
+        console.error("Failed to load pumps:", err);
+      }
     }
+    fetchPumps();
+  }, []);
+
+  useEffect(() => {
+    // if (selectedPump === allOption) {
+    setData([]);
+    const allData = {};
+
+    Promise.all(
+      Object.entries(pumpCsvMap).map(([pumpName, csvFile]) =>
+        fetch(csvFile)
+          .then((res) => res.text())
+          .then(
+            (csvText) =>
+              new Promise((resolve) =>
+                Papa.parse(csvText, {
+                  header: true,
+                  dynamicTyping: true,
+                  complete: (results) => {
+                    const cleaned = results.data.filter(
+                      (row) =>
+                        row.timestamp !== undefined &&
+                        row.timestamp !== null &&
+                        row.sensor_avg !== undefined
+                    );
+                    resolve([csvFile, cleaned]);
+                  },
+                })
+              )
+          )
+      )
+    ).then((results) => {
+      results.forEach(([csvFile, cleaned]) => {
+        allData[csvFile] = cleaned;
+      });
+      setAllPumpData(allData);
+    });
+    // }
+    // else {
+    //   const csvFile = pumpCsvMap[selectedPump];
+    //   fetch(csvFile)
+    //     .then((res) => res.text())
+    //     .then((csvText) => {
+    //       Papa.parse(csvText, {
+    //         header: true,
+    //         dynamicTyping: true,
+    //         complete: (results) => {
+    //           const cleaned = results.data.filter(
+    //             (row) =>
+    //               row.timestamp !== undefined &&
+    //               row.timestamp !== null &&
+    //               row.sensor_avg !== undefined
+    //           );
+    //           setData(cleaned);
+    //         },
+    //       });
+    //     });
+    //   setAllPumpData({});
+    // }
   }, [selectedPump]);
 
   const manageRoutes = {
@@ -102,7 +141,7 @@ export default function MonitoringPage() {
   };
 
   // Dropdown options include "Show All Pumps"
-  const pumpOptions = [allOption, ...Object.keys(pumpCsvMap)];
+  const pumpOptions = [allOption, ...allPumps.map((pump) => pump.name)];
 
   return (
     <div className="flex h-screen font-sans bg-[#f7f9fc]">
@@ -115,16 +154,16 @@ export default function MonitoringPage() {
       {/* Main content */}
       <main className="flex-1 bg-white overflow-y-auto px-8 py-4">
         {/* Header */}
-        <HeaderComponent username="username" userId="02943" />
-
+        {user && (
+          <HeaderComponent
+            username={user.firstName}
+            lastname={user.lastName}
+            userId={user._id}
+          />
+        )}
         <div className="flex justify-between items-center mt-4">
           <h2 className="text-2xl font-bold text-[#1e3a8a]">
             {selectedPump === allOption ? "All Pumps" : selectedPump}{" "}
-            {selectedPump !== allOption && (
-              <span className="text-sm font-normal text-black">
-                ({selectedPump.split("(")[1]?.replace(")", "")})
-              </span>
-            )}
           </h2>
           <select
             value={selectedPump}
@@ -139,7 +178,7 @@ export default function MonitoringPage() {
           </select>
         </div>
 
-        {/* Status cards */}
+        {/* Status cards
         <section className="grid grid-cols-3 gap-6 mt-4">
           <StatusCard
             title="Current Pump Status"
@@ -159,26 +198,26 @@ export default function MonitoringPage() {
             desc="Temperature is optimal"
             color="bg-gradient-to-r from-[#4f46e5] to-[#6366f1]"
           />
-        </section>
+        </section> */}
 
         {/* Live charts */}
         <section className="grid grid-cols-2 gap-6">
-          {selectedPump === allOption
-            ? Object.entries(allPumpData).map(([csvFile, pumpData]) => (
-                <ChartCard
-                  key={csvFile}
-                  title={`Live Sensor Average - ${cleanChartId(csvFile)}`}
-                  chartId={csvFile}
-                  data={pumpData}
-                />
-              ))
-            : (
+          {/* {selectedPump === allOption */}
+          {Object.entries(allPumpData).map(([csvFile, pumpData]) => (
+            <ChartCard
+              key={csvFile}
+              title={`Live Sensor Average - ${cleanChartId(csvFile)}`}
+              chartId={csvFile}
+              data={pumpData}
+            />
+          ))}
+          {/* : (
               <ChartCard
                 title={`Live Sensor Average - ${selectedPump}`}
                 chartId={pumpCsvMap[selectedPump]}
                 data={data}
               />
-            )}
+            )} */}
         </section>
       </main>
 

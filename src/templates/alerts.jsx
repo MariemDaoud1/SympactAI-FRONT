@@ -7,38 +7,61 @@ import ChatbotButtonComponent from "./ChatbotButton";
 export default function AlertsPage() {
   const navigate = useNavigate();
   const currentPath = window.location.pathname;
-  
+  const [user, setUser] = useState(null);
+  useEffect(() => {
+    async function fetchUser() {
+      try {
+        const res = await fetch("http://localhost:5000/api/user/profile", {
+          credentials: "include",
+        });
+        if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+        const data = await res.json();
+        setUser(data);
+        console.log("User loaded:", data);
+      } catch (err) {
+        console.error("Failed to load user profile:", err);
+      }
+    }
+    fetchUser();
+  }, []);
   const manageRoutes = {
-      Home: "/home",
-      Analytics: "/analytics",
-      Monitoring: "/monitoring",
-      Alerts: "/alerts",
-    };
-  
-    const prefRoutes = {
-      Settings: "/settings",
-      Help: "/help",
-      "Our Service Providers": "/providers",
-    };
+    Home: "/home",
+    Analytics: "/analytics",
+    Monitoring: "/monitoring",
+    Alerts: "/alerts",
+  };
+
+  const prefRoutes = {
+    Settings: "/settings",
+    Help: "/help",
+    "Our Service Providers": "/providers",
+  };
 
   return (
     <div className="flex h-screen font-sans ">
       <SidebarComponent
-              currentPath={currentPath}
-              manageRoutes={manageRoutes}
-              prefRoutes={prefRoutes}
-            />
+        currentPath={currentPath}
+        manageRoutes={manageRoutes}
+        prefRoutes={prefRoutes}
+      />
 
       {/* Main Content */}
       <div className="flex-1 bg-white overflow-y-auto px-8 py-4">
         {/* Header */}
-        <HeaderComponent username="username" userId="02943" />
-
+        {user && (
+          <HeaderComponent
+            username={user.firstName}
+            lastname={user.lastName}
+            userId={user._id}
+          />
+        )}
         {/* Alerts Table Section */}
         <section className="mt-4">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-xl font-semibold">Check Out Your Latest Alerts</h3>
+              <h3 className="text-xl font-semibold">
+                Check Out Your Latest Alerts
+              </h3>
               <p className="text-gray-500 text-sm">
                 Select an element to view more details or to generate a summary
                 report
@@ -52,7 +75,9 @@ export default function AlertsPage() {
           <div className="mt-4 text-sm">
             <div className="flex justify-between text-[#3A60FF] font-semibold border-b pb-2">
               <span>Latest Pumps Errors</span>
-              <span className="text-gray-400 font-normal">Latest Update 30 Sec Ago</span>
+              <span className="text-gray-400 font-normal">
+                Latest Update 30 Sec Ago
+              </span>
             </div>
             <table className="w-full mt-2 text-left border-collapse">
               <thead>
@@ -69,13 +94,67 @@ export default function AlertsPage() {
               </thead>
               <tbody>
                 {[
-                  ["Centrifugal Pump 1", "CP-12398", 1, "On", "2 PSI", "365 K", "1.2 kg/s", "0.05 pk"],
-                  ["Centrifugal Pump 2", "CP-12376", 1, "MT", "3 PSI", "365 K", "1.2 kg/s", "0.17 pk"],
+                  [
+                    "Centrifugal Pump 1",
+                    "CP-12398",
+                    1,
+                    "On",
+                    "2 PSI",
+                    "365 K",
+                    "1.2 kg/s",
+                    "0.05 pk",
+                  ],
+                  [
+                    "Centrifugal Pump 2",
+                    "CP-12376",
+                    1,
+                    "MT",
+                    "3 PSI",
+                    "365 K",
+                    "1.2 kg/s",
+                    "0.17 pk",
+                  ],
                   ["Membrane Pump 1", "MP-2356", 3, "Off", "-", "-", "-", "-"],
-                  ["Centrifugal Pump 3", "CP-3451", 1, "Off", "-", "-", "-", "-"],
-                  ["Centrifugal Pump 4", "CP-4218", 5, "On", "2 PSI", "265 K", "1.2 kg/s", "0.12 pk"],
-                  ["Lobe Pump 1", "LP-12398", 1, "On", "2 PSI", "365 K", "1.2 kg/s", "0.05 pk"],
-                  ["Piston Pump 2", "PP-12376", 1, "MT", "3 PSI", "365 K", "1.2 kg/s", "0.17 pk"],
+                  [
+                    "Centrifugal Pump 3",
+                    "CP-3451",
+                    1,
+                    "Off",
+                    "-",
+                    "-",
+                    "-",
+                    "-",
+                  ],
+                  [
+                    "Centrifugal Pump 4",
+                    "CP-4218",
+                    5,
+                    "On",
+                    "2 PSI",
+                    "265 K",
+                    "1.2 kg/s",
+                    "0.12 pk",
+                  ],
+                  [
+                    "Lobe Pump 1",
+                    "LP-12398",
+                    1,
+                    "On",
+                    "2 PSI",
+                    "365 K",
+                    "1.2 kg/s",
+                    "0.05 pk",
+                  ],
+                  [
+                    "Piston Pump 2",
+                    "PP-12376",
+                    1,
+                    "MT",
+                    "3 PSI",
+                    "365 K",
+                    "1.2 kg/s",
+                    "0.17 pk",
+                  ],
                 ].map((row, idx) => (
                   <tr key={idx} className="border-b">
                     {row.map((cell, i) => {
@@ -84,7 +163,9 @@ export default function AlertsPage() {
                         return (
                           <td key={i} className="py-2">
                             <button
-                              onClick={() => navigate(`/pumps/${row[1].toLowerCase()}`)}
+                              onClick={() =>
+                                navigate(`/pumps/${row[1].toLowerCase()}`)
+                              }
                               className="text-[#3A60FF] hover:underline focus:outline-none"
                               type="button"
                             >
@@ -141,7 +222,9 @@ export default function AlertsPage() {
 
             {/* Latest Reports */}
             <div className="col-span-1">
-              <h4 className="font-semibold">View or Download Previous Reports</h4>
+              <h4 className="font-semibold">
+                View or Download Previous Reports
+              </h4>
               <div className="grid grid-cols-2 gap-2 mt-2">
                 {[
                   ["CP-12398 Report", "10 November 2024", "9pm"],

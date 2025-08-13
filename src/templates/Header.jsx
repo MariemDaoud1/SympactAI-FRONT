@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Search, Bell } from "lucide-react";
 
 
-export default function HeaderComponent({ username = "username", userId = "02943" }) {
+export default function HeaderComponent({ username , lastname, userId }) {
   const navigate = useNavigate();
   const [currentTime, setCurrentTime] = useState(new Date());
   const [notifications, setNotifications] = useState(3);
@@ -43,13 +43,8 @@ export default function HeaderComponent({ username = "username", userId = "02943
               )}
             </button>
         <div className="flex items-center gap-2 cursor-pointer">
-          <img
-            src="/username.jpg"
-            className="w-10 h-10 rounded-full object-cover"
-            alt="User"
-          />
           <div className="text-sm">
-            <p>{username}</p>
+            <p>{username} {lastname}</p>
             <p className="text-gray-400 text-xs">ID {userId}</p>
           </div>
           <span className="text-lg">▾</span>

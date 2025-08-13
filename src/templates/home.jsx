@@ -1,29 +1,58 @@
 import React, { useState, useEffect } from "react";
-import { Link, useLocation,useNavigate } from "react-router-dom";
-import { Bell, Search, Power, TrendingUp, AlertTriangle, CheckCircle, Zap } from "lucide-react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import {
+  Bell,
+  Search,
+  Power,
+  TrendingUp,
+  AlertTriangle,
+  CheckCircle,
+  Zap,
+} from "lucide-react";
 import SidebarComponent from "./Sidebar";
 import HeaderComponent from "./Header";
 import ChatbotButtonComponent from "./ChatbotButton";
 
 export default function HomePage() {
+  const [user, setUser] = useState(null);
 
   const currentPath = window.location.pathname;
-    const [selectedPump, setSelectedPump] = useState("Centrifugal Pump 1 (CP-12398)");
-    const manageRoutes = {
-      Home: "/home",
-      Analytics: "/analytics",
-      Monitoring: "/monitoring",
-      Alerts: "/alerts",
-    };
-    const prefRoutes = {
-      Settings: "/settings",
-      Help: "/help",
-      "Our Service Providers": "/providers",
-    };
+  const [selectedPump, setSelectedPump] = useState(
+    "Centrifugal Pump 1 (CP-12398)"
+  );
+  const manageRoutes = {
+    Home: "/home",
+    Analytics: "/analytics",
+    Monitoring: "/monitoring",
+    Alerts: "/alerts",
+  };
+  const prefRoutes = {
+    Settings: "/settings",
+    Help: "/help",
+    "Our Service Providers": "/providers",
+  };
   const [notifications, setNotifications] = useState(3);
   const [pumpData, setPumpData] = useState([
-    { name: "Centrifugal Pump 1", id: "CP-12036", line: 3, status: "OFF", pressure: 4.99, temp: "220°C", flow: "128.6", vibration: "87.3" },
-    { name: "Centrifugal Pump 2", id: "CP-12037", line: 2, status: "ON", pressure: 5.12, temp: "222°C", flow: "132.4", vibration: "92.1" },
+    {
+      name: "Centrifugal Pump 1",
+      id: "CP-12036",
+      line: 3,
+      status: "OFF",
+      pressure: 4.99,
+      temp: "220°C",
+      flow: "128.6",
+      vibration: "87.3",
+    },
+    {
+      name: "Centrifugal Pump 2",
+      id: "CP-12037",
+      line: 2,
+      status: "ON",
+      pressure: 5.12,
+      temp: "222°C",
+      flow: "132.4",
+      vibration: "92.1",
+    },
   ]);
   const [currentTime, setCurrentTime] = useState(new Date());
 
@@ -37,6 +66,23 @@ export default function HomePage() {
   };
 
   useEffect(() => {
+    async function fetchUser() {
+      try {
+        const res = await fetch("http://localhost:5000/api/user/profile", {
+          credentials: "include",
+        });
+        if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+        const data = await res.json();
+        setUser(data);
+        console.log("User loaded:", data);
+      } catch (err) {
+        console.error("Failed to load user profile:", err);
+      }
+    }
+    fetchUser();
+  }, []);
+
+  useEffect(() => {
     const timer = setInterval(() => {
       setCurrentTime(new Date());
     }, 1000);
@@ -44,9 +90,13 @@ export default function HomePage() {
   }, []);
 
   const handlePumpToggle = (index) => {
-    setPumpData(prev => prev.map((pump, i) => 
-      i === index ? { ...pump, status: pump.status === 'ON' ? 'OFF' : 'ON' } : pump
-    ));
+    setPumpData((prev) =>
+      prev.map((pump, i) =>
+        i === index
+          ? { ...pump, status: pump.status === "ON" ? "OFF" : "ON" }
+          : pump
+      )
+    );
   };
 
   const clearNotifications = () => {
@@ -62,30 +112,35 @@ export default function HomePage() {
       />
       {/* Main content */}
       <main className="flex-1 bg-white overflow-y-auto px-8 py-4">
-          {/* Header */}
-          <HeaderComponent username="username" userId="02943" />
-
+        {/* Header */}
+        {user && (
+          <HeaderComponent
+            username={user.firstName}
+            lastname={user.lastName}
+            userId={user._id}
+          />
+        )}
         {/* Overview cards */}
         <section className="grid grid-cols-3 gap-6 mt-4">
-          <OverviewCard 
-            title="Predicted System Failure" 
-            value="20%" 
-            desc="System failure predicted this month" 
-            color="bg-purple-200" 
+          <OverviewCard
+            title="Predicted System Failure"
+            value="20%"
+            desc="System failure predicted this month"
+            color="bg-purple-200"
             icon={<AlertTriangle className="text-purple-600" size={24} />}
           />
-          <OverviewCard 
-            title="Current Pumps ON" 
-            value="7" 
-            desc="70% of total" 
-            color="bg-blue-200" 
+          <OverviewCard
+            title="Current Pumps ON"
+            value="7"
+            desc="70% of total"
+            color="bg-blue-200"
             icon={<CheckCircle className="text-blue-600" size={24} />}
           />
-          <OverviewCard 
-            title="Power Usage (kWh)" 
-            value="198" 
-            desc="65% until system saturation" 
-            color="bg-indigo-200" 
+          <OverviewCard
+            title="Power Usage (kWh)"
+            value="198"
+            desc="65% until system saturation"
+            color="bg-indigo-200"
             icon={<Zap className="text-indigo-600" size={24} />}
           />
         </section>
@@ -94,12 +149,16 @@ export default function HomePage() {
         <section className="grid grid-cols-3 gap-6 mb-8">
           <div className="col-span-2 bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow">
             <div className="flex items-center justify-between mb-4">
-              <h3 className="font-semibold">Pump Vibration Over Operation Time</h3>
+              <h3 className="font-semibold">
+                Pump Vibration Over Operation Time
+              </h3>
               <TrendingUp className="text-gray-400" size={20} />
             </div>
             <div className="h-40 bg-gradient-to-r from-purple-100 to-purple-200 flex items-center justify-center rounded-lg">
               <div className="text-center">
-                <div className="animate-pulse text-purple-600 text-lg font-semibold">Live Data</div>
+                <div className="animate-pulse text-purple-600 text-lg font-semibold">
+                  Live Data
+                </div>
                 <div className="text-sm text-gray-500">Vibration: 87.3 Hz</div>
               </div>
             </div>
@@ -142,13 +201,28 @@ export default function HomePage() {
               </thead>
               <tbody>
                 {pumpData.map((pump, i) => (
-                  <tr key={i} className="border-b hover:bg-gray-50 transition-colors">
+                  <tr
+                    key={i}
+                    className="border-b hover:bg-gray-50 transition-colors"
+                  >
                     <td className="py-2">{pump.name}</td>
                     <td className="py-2">{pump.id}</td>
                     <td className="py-2">{pump.line}</td>
-                    <td className={`py-2 font-semibold ${pump.status === 'OFF' ? 'text-red-500' : 'text-green-600'}`}>
+                    <td
+                      className={`py-2 font-semibold ${
+                        pump.status === "OFF"
+                          ? "text-red-500"
+                          : "text-green-600"
+                      }`}
+                    >
                       <div className="flex items-center gap-1">
-                        <div className={`w-2 h-2 rounded-full ${pump.status === 'OFF' ? 'bg-red-500' : 'bg-green-500'}`}></div>
+                        <div
+                          className={`w-2 h-2 rounded-full ${
+                            pump.status === "OFF"
+                              ? "bg-red-500"
+                              : "bg-green-500"
+                          }`}
+                        ></div>
                         {pump.status}
                       </div>
                     </td>
@@ -160,13 +234,13 @@ export default function HomePage() {
                       <button
                         onClick={() => handlePumpToggle(i)}
                         className={`px-3 py-1 rounded-full text-xs font-medium transition-all transform hover:scale-105 ${
-                          pump.status === 'OFF' 
-                            ? 'bg-green-100 text-green-800 hover:bg-green-200' 
-                            : 'bg-red-100 text-red-800 hover:bg-red-200'
+                          pump.status === "OFF"
+                            ? "bg-green-100 text-green-800 hover:bg-green-200"
+                            : "bg-red-100 text-red-800 hover:bg-red-200"
                         }`}
                       >
                         <Power size={12} className="inline mr-1" />
-                        {pump.status === 'OFF' ? 'Turn ON' : 'Turn OFF'}
+                        {pump.status === "OFF" ? "Turn ON" : "Turn OFF"}
                       </button>
                     </td>
                   </tr>
@@ -178,7 +252,10 @@ export default function HomePage() {
           <div className="bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow">
             <h3 className="font-semibold mb-4">Latest Error Reports</h3>
             {[1, 2, 3, 4].map((item) => (
-              <div key={item} className="flex items-center gap-2 mb-3 p-2 hover:bg-blue-50 rounded-md cursor-pointer transition-all hover:scale-105 hover:shadow-sm">
+              <div
+                key={item}
+                className="flex items-center gap-2 mb-3 p-2 hover:bg-blue-50 rounded-md cursor-pointer transition-all hover:scale-105 hover:shadow-sm"
+              >
                 <img
                   src="https://via.placeholder.com/40"
                   alt="Pump"
@@ -197,14 +274,16 @@ export default function HomePage() {
         </section>
       </main>
       {/* Reusable Chatbot Button */}
-            <ChatbotButtonComponent />
+      <ChatbotButtonComponent />
     </div>
   );
 }
 
 function OverviewCard({ title, value, desc, color, icon }) {
   return (
-    <div className={`p-4 rounded-xl shadow-sm ${color} hover:shadow-md transition-all duration-200 hover:scale-105 cursor-pointer`}>
+    <div
+      className={`p-4 rounded-xl shadow-sm ${color} hover:shadow-md transition-all duration-200 hover:scale-105 cursor-pointer`}
+    >
       <div className="flex items-center justify-between mb-2">
         <div className="text-gray-800 font-bold text-2xl">{value}</div>
         {icon}

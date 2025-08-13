@@ -140,7 +140,7 @@ export default function MonitoringPage() {
         </div>
 
         {/* Status cards */}
-        <section className="grid grid-cols-3 gap-6 mb-8">
+        <section className="grid grid-cols-3 gap-6 mt-4">
           <StatusCard
             title="Current Pump Status"
             value="ON"

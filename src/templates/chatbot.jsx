@@ -1,48 +1,11 @@
 import React, { useEffect, useState, useRef } from "react";
 import {
-  Bell,
-  Search,
-  MessageCircle,
-  HelpCircle,
-  FileText,
-  ArrowLeft,
-  Send,
-  Bot,
-  User,
-  Settings,
-  History,
-  Trash2,
-  Download,
-  Copy,
-  Minimize2,
-  Maximize2,
-  AlertTriangle,
-  CheckCircle,
-  Clock,
-  Zap
+  Bell, Search, MessageCircle, HelpCircle, FileText, ArrowLeft, Send, Bot, User,
+  Settings, History, Trash2, Download, Copy, Minimize2, Maximize2,
+  AlertTriangle, CheckCircle, Clock, Zap
 } from "lucide-react";
 
-// Mock socket for demonstration
-const mockSocket = {
-  on: (event, callback) => {
-    if (event === "bot reply") {
-      // Simulate bot responses with delay
-      setTimeout(() => {
-        const responses = [
-          "I'm analyzing your pump data... Please wait a moment.",
-          "Based on your pump specifications, I recommend checking the pressure levels.",
-          "Your pump is operating within normal parameters. Current efficiency is at 94%.",
-          "I've detected a minor anomaly in motor vibration. Would you like me to schedule maintenance?",
-          "Pump maintenance reminder: Last service was 45 days ago. Next service due in 15 days."
-        ];
-        const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-        callback(randomResponse);
-      }, 1000 + Math.random() * 2000);
-    }
-  },
-  off: () => {},
-  emit: () => {}
-};
+let socket; // WebSocket instance
 
 export default function PumpOChatbotPage() {
   const [messages, setMessages] = useState([
@@ -58,7 +21,7 @@ export default function PumpOChatbotPage() {
   const [chatHistory, setChatHistory] = useState([]);
   const [isMinimized, setIsMinimized] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
-  const [currentChatId, setCurrentChatId] = useState(1);
+  const [currentChatId, setCurrentChatId] = useState(null); // backend conversationId
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -71,64 +34,110 @@ export default function PumpOChatbotPage() {
   }, [messages]);
 
   useEffect(() => {
-    mockSocket.on("bot reply", (msg) => {
-      setIsTyping(false);
-      setMessages((prev) => [...prev, { 
-        from: "bot", 
-        text: msg, 
-        timestamp: new Date(),
-        type: "response"
-      }]);
-    });
+    const token = localStorage.getItem("token"); // Make sure token is stored after login
+    if (!token) {
+    console.error("No token found. Redirecting to login...");
+    window.location.href = "/signin";
+    return;
+  }
+    socket = new WebSocket("ws://localhost:5000", `Bearer ${token}`);
+
+    socket.onopen = () => {
+      console.log("✅ Connected to WebSocket server");
+      // Optionally load history after connect
+      if (currentChatId) {
+        socket.send(JSON.stringify({ type: "load_history", conversationId: currentChatId }));
+      }
+    };
+
+    socket.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+
+      if (data.type === "message") {
+        setIsTyping(false);
+        setMessages(prev => [
+          ...prev,
+          {
+            from: data.message.senderId ? "user" : "bot",
+            text: data.message.text,
+            timestamp: new Date(data.message.createdAt || Date.now()),
+            type: "response"
+          }
+        ]);
+      }
+      else if (data.type === "history") {
+        setCurrentChatId(data.conversationId);
+        setMessages(
+          data.messages.map(msg => ({
+            from: msg.senderId ? "user" : "bot",
+            text: msg.text,
+            timestamp: new Date(msg.createdAt),
+            type: "history"
+          }))
+        );
+      }
+      else if (data.type === "new_conversation") {
+        setCurrentChatId(data.conversationId);
+        setMessages([{
+          from: "bot",
+          text: "New conversation started! How can I help?",
+          timestamp: new Date(),
+          type: "system"
+        }]);
+      }
+      else if (data.type === "error") {
+        console.error("Server error:", data.message);
+      }
+    };
+
+    socket.onclose = () => {
+      console.log("❌ WebSocket connection closed");
+    };
 
     return () => {
-      mockSocket.off("bot reply");
+      if (socket) socket.close();
     };
   }, []);
 
   const sendMessage = (text) => {
     if (!text.trim()) return;
-    
-    const userMessage = { 
-      from: "user", 
-      text, 
+
+    const userMessage = {
+      from: "user",
+      text,
       timestamp: new Date(),
       type: "message"
     };
-    
-    setMessages((prev) => [...prev, userMessage]);
+
+    setMessages(prev => [...prev, userMessage]);
     setIsTyping(true);
-    mockSocket.emit("chat message", text);
+
+    socket.send(JSON.stringify({
+      type: "message",
+      text,
+      conversationId: currentChatId
+    }));
   };
 
   const clearChat = () => {
-    // Save current chat to history if it has more than just the welcome message
     if (messages.length > 1) {
       const chatSession = {
-        id: currentChatId,
+        id: currentChatId || Date.now(),
         title: generateChatTitle(messages),
         messages: [...messages],
         timestamp: new Date(),
-        messageCount: messages.length - 1 // Exclude welcome message
+        messageCount: messages.length - 1
       };
       setChatHistory(prev => [chatSession, ...prev]);
-      setCurrentChatId(prev => prev + 1);
     }
-    
-    setMessages([{
-      from: "bot",
-      text: "Chat cleared! How can I help you with your pumps today?",
-      timestamp: new Date(),
-      type: "system"
-    }]);
+
+    socket.send(JSON.stringify({ type: "new_conversation" }));
   };
 
   const generateChatTitle = (messages) => {
     const userMessages = messages.filter(msg => msg.from === "user");
     if (userMessages.length === 0) return "New Chat";
-    
     const firstMessage = userMessages[0].text;
-    // Create a title from the first user message (max 30 characters)
     return firstMessage.length > 30 ? firstMessage.substring(0, 30) + "..." : firstMessage;
   };
 
@@ -145,10 +154,10 @@ export default function PumpOChatbotPage() {
     const now = new Date();
     const messageDate = new Date(timestamp);
     const diffInHours = (now - messageDate) / (1000 * 60 * 60);
-    
+
     if (diffInHours < 24) {
       return messageDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    } else if (diffInHours < 168) { // Less than a week
+    } else if (diffInHours < 168) {
       return messageDate.toLocaleDateString([], { weekday: 'short', hour: '2-digit', minute: '2-digit' });
     } else {
       return messageDate.toLocaleDateString([], { month: 'short', day: 'numeric' });

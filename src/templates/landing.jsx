@@ -313,7 +313,7 @@ function LandingPage() {
               </h2>
 
               <p className="text-xl text-cyan-200 max-w-2xl mx-auto">
-                Join <span className="font-bold text-cyan-400">PumpWatch</span> today and experience
+                Join <span className="font-bold text-cyan-400" onClick={() => navigate('/signup')}>PumpWatch</span> today and experience
                 the power of predictive maintenance with cutting-edge AI technology.
               </p>
 
@@ -322,7 +322,7 @@ function LandingPage() {
                   onClick={() => window.location.href = '#signup'}
                   className="group relative bg-gradient-to-r from-cyan-600 to-cyan-700 text-white text-lg font-semibold px-10 py-4 rounded-xl shadow-2xl hover:shadow-cyan-600/40 transition-all duration-300 transform hover:scale-105 hover:-translate-y-1"
                 >
-                  <span className="relative z-10">Start Free Trial</span>
+                  <span className="relative z-10" onClick={() => navigate('/signup')}>Start Free Trial</span>
                   <div className="absolute inset-0 bg-gradient-to-r from-cyan-500 to-cyan-600 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </button>
 

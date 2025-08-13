@@ -88,7 +88,7 @@ export default function AnalyticsPage() {
           </div>
         </section>
 
-        <div className="bg-gradient-to-br from-purple-200 to-blue-100 p-6 rounded-xl shadow-md">
+        <div className="bg-gradient-to-br from-purple-200 to-blue-100 p-6 rounded-xl shadow-md mt-6">
           {/* <h3 className="font-semibold text-lg mb-4">
             Prediction with Operation States - {selectedQuarter}
           </h3> */}

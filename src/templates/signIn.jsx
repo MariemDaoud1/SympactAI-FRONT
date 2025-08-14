@@ -1,18 +1,18 @@
-import React, { useState } from 'react';
-import { Mail, Lock } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { loginUser } from '../api'; // import from your api.js
+import React, { useState } from "react";
+import { Mail, Lock } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { loginUser } from "../api"; // import from your api.js
 
 export default function SignInPage() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false); // keep if you want UI toggle
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    setError(''); // clear previous errors
+    setError(""); // clear previous errors
 
     try {
       // Use the loginUser helper
@@ -22,12 +22,12 @@ export default function SignInPage() {
         // rememberMe,  // remove if backend does not expect it
       });
 
-      console.log(response.data.message); // or user data/token
+      console.log(response); // or user data/token
       // TODO: Save user info/token here if needed
-      navigate('/home'); // or wherever you want after login
+      navigate("/home"); // or wherever you want after login
     } catch (err) {
       console.error(err);
-      setError(err.response?.data?.message || 'Login failed');
+      setError(err.response?.data?.message || "Login failed");
     }
   };
 
@@ -37,17 +37,22 @@ export default function SignInPage() {
       <div className="w-1/3 bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 relative flex items-center justify-center transition-all duration-700 ease-in-out">
         <div className="absolute top-1/2 right-[-112px] transform -translate-y-1/2 rotate-90 flex items-center gap-4">
           <button
-            style={{ fontSize: '20px' }}
-            onClick={() => navigate('/signup')}
+            style={{ fontSize: "20px" }}
+            onClick={() => navigate("/signup")}
             className="px-6 py-2 border border-[#6c88e8] text-[#6c88e8] rounded-full text-sm font-bold transform rotate-180-translate-x-4 hover:bg-blue hover:text-white hover:border-[#f44336] transition-all duration-300"
           >
             SIGN UP
           </button>
-          <div style={{ fontSize: '20px' }} className="bg-white rounded-full px-6 py-2 shadow-md">
+          <div
+            style={{ fontSize: "20px" }}
+            className="bg-white rounded-full px-6 py-2 shadow-md"
+          >
             <span className="text-[#6c88e8] font-bold">SIGN IN</span>
           </div>
         </div>
-        <div className="absolute bottom-4 text-xs text-white">PumpWatch all rights reserved 2024</div>
+        <div className="absolute bottom-4 text-xs text-white">
+          PumpWatch all rights reserved 2024
+        </div>
       </div>
 
       {/* Right Side Form */}

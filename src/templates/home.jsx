@@ -8,13 +8,18 @@ import {
   AlertTriangle,
   CheckCircle,
   Zap,
+  Settings,
 } from "lucide-react";
+import Papa from "papaparse";
+
 import SidebarComponent from "./Sidebar";
 import HeaderComponent from "./Header";
 import ChatbotButtonComponent from "./ChatbotButton";
+import ChartCard from "./chartCard";
 
 export default function HomePage() {
   const [user, setUser] = useState(null);
+  const [allPumps, setAllPumps] = useState([]);
 
   const currentPath = window.location.pathname;
   const [selectedPump, setSelectedPump] = useState(
@@ -54,6 +59,22 @@ export default function HomePage() {
       vibration: "92.1",
     },
   ]);
+  useEffect(() => {
+    async function fetchPumps() {
+      try {
+        const res = await fetch("http://localhost:5000/api/pumps", {
+          credentials: "include",
+        });
+        if (!res.ok) throw new Error(`HTTP error ${res.status}`);
+        const data = await res.json();
+        setAllPumps(data);
+        console.log("Pumps loaded:", data);
+      } catch (err) {
+        console.error("Failed to load pumps:", err);
+      }
+    }
+    fetchPumps();
+  }, []);
   const [currentTime, setCurrentTime] = useState(new Date());
 
   const navigate = useNavigate();
@@ -102,6 +123,52 @@ export default function HomePage() {
   const clearNotifications = () => {
     setNotifications(0);
   };
+  const activePumpsCount = allPumps.filter(
+    (pump) => pump.status === "active"
+  ).length;
+  const activePercentage = ((activePumpsCount / allPumps.length) * 100).toFixed(
+    0
+  ); // rounded to 0 decimals
+  const inactivePumpsCount = allPumps.filter(
+    (pump) => pump.status === "inactive"
+  ).length;
+  const inactivePercentage = (
+    (inactivePumpsCount / allPumps.length) *
+    100
+  ).toFixed(0); // rounded to 0 decimals
+  const maintenancePumpsCount = allPumps.filter(
+    (pump) => pump.status === "maintenance"
+  ).length;
+  const maintenancePercentage = (
+    (maintenancePumpsCount / allPumps.length) *
+    100
+  ).toFixed(0); // rounded to 0 decimals
+  const [pumpSensorData, setPumpSensorData] = useState([]);
+  useEffect(() => {
+    // Load one CSV file for Home page chart
+    fetch("/f1PETIT.csv")
+      .then((res) => res.text())
+      .then((csvText) => {
+        Papa.parse(csvText, {
+          header: true,
+          dynamicTyping: true,
+          complete: (results) => {
+            const cleaned = results.data
+              .filter(
+                (row) =>
+                  row.timestamp !== undefined &&
+                  row.timestamp !== null &&
+                  row.sensor_avg !== undefined
+              )
+              .map((row) => ({
+                ...row,
+                timestamp: new Date(row.timestamp).getTime(), // convert to number
+              }));
+            setPumpSensorData(cleaned);
+          },
+        });
+      });
+  }, []);
 
   return (
     <div className="flex h-screen font-sans bg-gray-100">
@@ -123,23 +190,24 @@ export default function HomePage() {
         {/* Overview cards */}
         <section className="grid grid-cols-3 gap-6 mt-4">
           <OverviewCard
-            title="Predicted System Failure"
-            value="20%"
-            desc="System failure predicted this month"
-            color="bg-purple-200"
-            icon={<AlertTriangle className="text-purple-600" size={24} />}
-          />
-          <OverviewCard
             title="Current Pumps ON"
-            value="7"
-            desc="70% of total"
+            value={activePumpsCount}
+            desc={`${activePercentage}% of total`}
             color="bg-blue-200"
             icon={<CheckCircle className="text-blue-600" size={24} />}
           />
           <OverviewCard
-            title="Power Usage (kWh)"
-            value="198"
-            desc="65% until system saturation"
+            title="Current Pumps OFF"
+            value={inactivePumpsCount}
+            desc={`${inactivePercentage}% of total`}
+            color="bg-red-200"
+            icon={<AlertTriangle className="text-purple-600" size={24} />}
+          />
+
+          <OverviewCard
+            title="Current Pumps In Maintenance"
+            value={maintenancePumpsCount}
+            desc={`${maintenancePercentage}% of total`}
             color="bg-indigo-200"
             icon={<Zap className="text-indigo-600" size={24} />}
           />
@@ -148,20 +216,11 @@ export default function HomePage() {
         {/* Graphs and Reports */}
         <section className="grid grid-cols-3 gap-6 mb-8">
           <div className="col-span-2 bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="font-semibold">
-                Pump Vibration Over Operation Time
-              </h3>
-              <TrendingUp className="text-gray-400" size={20} />
-            </div>
-            <div className="h-40 bg-gradient-to-r from-purple-100 to-purple-200 flex items-center justify-center rounded-lg">
-              <div className="text-center">
-                <div className="animate-pulse text-purple-600 text-lg font-semibold">
-                  Live Data
-                </div>
-                <div className="text-sm text-gray-500">Vibration: 87.3 Hz</div>
-              </div>
-            </div>
+            <ChartCard
+              title="Pump Vibration Over Operation Time"
+              chartId="home-pump-chart"
+              data={pumpSensorData} // pass the parsed numeric timestamp data
+            />
           </div>
 
           <div className="bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow">
@@ -179,7 +238,7 @@ export default function HomePage() {
         <section className="grid grid-cols-3 gap-6">
           <div className="col-span-2 bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow">
             <div className="flex justify-between items-center mb-2">
-              <h3 className="font-semibold">Latest Pumps Errors</h3>
+              <h3 className="font-semibold">Pumps Overview</h3>
               <span className="text-sm text-gray-500 flex items-center gap-1">
                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                 Latest Update 30 Sec Ago
@@ -190,24 +249,22 @@ export default function HomePage() {
                 <tr className="text-gray-600 border-b">
                   <th className="pb-2">Pump Name</th>
                   <th className="pb-2">ID</th>
-                  <th className="pb-2">Line</th>
+                  <th className="pb-2">Location</th>
+                  <th className="pb-2">Material</th>
                   <th className="pb-2">Status</th>
                   <th className="pb-2">Pressure</th>
-                  <th className="pb-2">Temperature</th>
-                  <th className="pb-2">Flow</th>
-                  <th className="pb-2">Vibration</th>
-                  <th className="pb-2">Action</th>
                 </tr>
               </thead>
               <tbody>
-                {pumpData.map((pump, i) => (
+                {allPumps.map((pump, i) => (
                   <tr
                     key={i}
                     className="border-b hover:bg-gray-50 transition-colors"
                   >
                     <td className="py-2">{pump.name}</td>
-                    <td className="py-2">{pump.id}</td>
-                    <td className="py-2">{pump.line}</td>
+                    <td className="py-2">{pump._id}</td>
+                    <td className="py-2">{pump.location}</td>
+                    <td className="py-2">{pump.material}</td>
                     <td
                       className={`py-2 font-semibold ${
                         pump.status === "OFF"
@@ -226,10 +283,7 @@ export default function HomePage() {
                         {pump.status}
                       </div>
                     </td>
-                    <td className="py-2">{pump.pressure}</td>
-                    <td className="py-2">{pump.temp}</td>
-                    <td className="py-2">{pump.flow}</td>
-                    <td className="py-2">{pump.vibration}</td>
+                    <td className="py-2">{pump.pressure_rating}</td>
                     <td className="py-2">
                       <button
                         onClick={() => handlePumpToggle(i)}
@@ -256,11 +310,6 @@ export default function HomePage() {
                 key={item}
                 className="flex items-center gap-2 mb-3 p-2 hover:bg-blue-50 rounded-md cursor-pointer transition-all hover:scale-105 hover:shadow-sm"
               >
-                <img
-                  src="https://via.placeholder.com/40"
-                  alt="Pump"
-                  className="rounded-full w-10 h-10"
-                />
                 <div className="text-sm flex-1">
                   <div className="font-medium">CP-278 Report</div>
                   <div className="text-gray-500">Line 3 Vibration Issue</div>

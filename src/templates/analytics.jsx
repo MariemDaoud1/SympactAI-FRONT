@@ -83,9 +83,9 @@ export default function AnalyticsPage() {
           <div>
             <p className="text-lg font-medium">You are now viewing :</p>
             <h2 className="text-2xl font-bold text-blue-900 mt-1">
-              {selectedPump?.name}{" "}
+              {selectedPump?.name || "No pump selected"}{" "}
               <span className="text-sm font-normal text-black">
-                ({selectedPump?._id})
+                {selectedPump?._id}
               </span>
             </h2>
           </div>
@@ -126,7 +126,7 @@ export default function AnalyticsPage() {
           </div>
         </section>
 
-        <div className="bg-gradient-to-br from-purple-200 to-blue-100 p-6 rounded-xl shadow-md mt-6">
+        <div className="bg-white  ">
           {/* <h3 className="font-semibold text-lg mb-4">
             Prediction with Operation States - {selectedQuarter}
           </h3> */}

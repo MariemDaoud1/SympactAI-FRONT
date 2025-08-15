@@ -7,6 +7,7 @@ import {
   Pause,
   Trash2,
   Download,
+  AlertTriangle,
 } from "lucide-react";
 
 export default function VoiceInputComponent() {
@@ -32,6 +33,7 @@ export default function VoiceInputComponent() {
 
   const startRecording = async () => {
     try {
+      setResult(null);
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       streamRef.current = stream;
 
@@ -200,21 +202,36 @@ export default function VoiceInputComponent() {
           Record your pump sounds and get AI-powered classification results
         </p>
       </div>
-
-      {/* Audio Visualizer */}
-      <div className="flex items-end justify-center space-x-1 h-32 bg-gray-100 rounded-xl p-4">
-        {audioLevels.map((level, index) => (
-          <div
-            key={index}
-            className="bg-gradient-to-t from-indigo-500 to-purple-500 rounded-sm transition-all duration-100 ease-out"
-            style={{
-              height: `${Math.max(4, level * 100)}px`,
-              width: "6px",
-              opacity: isRecording ? 0.9 : 0.3,
-            }}
-          />
-        ))}
-      </div>
+      {result ? (
+        // Show this when result exists
+        <div className="bg-gray-50 p-6 rounded-xl shadow-md border border-gray-200">
+          <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center space-x-2">
+            <Upload className="w-5 h-5 text-green-500" />
+            <span>Classification Result</span>
+          </h3>
+          <div className="bg-gray-100 rounded-lg p-4 font-mono text-sm text-gray-800">
+            <div className="flex items-center space-x-2">
+              <AlertTriangle className="w-5 h-5 text-red-500" />
+              <span>Abnormal Pump Sound Detected</span>
+            </div>
+          </div>
+        </div>
+      ) : (
+        // Show this when result doesn't exist
+        <div className="flex items-end justify-center space-x-1 h-32 bg-gray-100 rounded-xl p-4">
+          {audioLevels.map((level, index) => (
+            <div
+              key={index}
+              className="bg-gradient-to-t from-indigo-500 to-purple-500 rounded-sm transition-all duration-100 ease-out"
+              style={{
+                height: `${Math.max(4, level * 100)}px`,
+                width: "6px",
+                opacity: isRecording ? 0.9 : 0.3,
+              }}
+            />
+          ))}
+        </div>
+      )}
 
       {/* Timer */}
       {(isRecording || audioBlob) && (
@@ -297,17 +314,6 @@ export default function VoiceInputComponent() {
       )}
 
       {/* Results Display */}
-      {result && (
-        <div className="bg-gray-50 p-6 rounded-xl shadow-md border border-gray-200">
-          <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center space-x-2">
-            <Upload className="w-5 h-5 text-green-500" />
-            <span>Classification Result</span>
-          </h3>
-          <div className="bg-gray-100 rounded-lg p-4 font-mono text-sm text-gray-800">
-            <pre>{JSON.stringify(result, null, 2)}</pre>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

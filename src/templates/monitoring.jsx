@@ -19,7 +19,6 @@ export default function MonitoringPage() {
   const location = useLocation();
 
   const currentPath = location.pathname;
-
   const allOption = "Show All Pumps";
 
   const [selectedPump, setSelectedPump] = useState(allOption);
@@ -27,6 +26,7 @@ export default function MonitoringPage() {
   const [allPumpData, setAllPumpData] = useState({});
   const [allPumps, setAllPumps] = useState([]);
   const [user, setUser] = useState(null);
+  const [pumpCsvMap, setPumpCsvMap] = useState({});
 
   useEffect(() => {
     async function fetchUser() {
@@ -45,11 +45,6 @@ export default function MonitoringPage() {
     fetchUser();
   }, []);
 
-  const pumpCsvMap = {
-    "Centrifugal Pump 1 (CP-12398)": "/f1PETIT.csv",
-    "Centrifugal Pump 2 (CP-12399)": "/f2.csv",
-    "Centrifugal Pump 3 (CP-12400)": "/f3MOY.csv",
-  };
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -63,6 +58,42 @@ export default function MonitoringPage() {
         const data = await res.json();
         setAllPumps(data);
         console.log("Pumps loaded:", data);
+
+        // Create dynamic CSV mapping based on fetched pumps
+        const dynamicCsvMap = {};
+
+        data.forEach((pump, index) => {
+          if (index === 0) {
+            // First pump uses original CSV files
+            dynamicCsvMap[pump.name] = {
+              Flow: "/Flow.csv",
+              Pressure: "/Pressure.csv",
+              Temperature: "/Temprature.csv",
+            };
+          } else if (index === 1) {
+            // Second pump uses Pump2 files
+            dynamicCsvMap[pump.name] = {
+              Flow: "/Pump2_flow.csv",
+              Pressure: "/Pump2_pressure.csv",
+              Temperature: "/Pump2_temp.csv",
+            };
+          } else {
+            // Additional pumps can reuse existing files or you can add more
+            dynamicCsvMap[pump.name] = {
+              Flow: "/Flow.csv", // Fallback to original files
+              Pressure: "/Pressure.csv",
+              Temperature: "/Temprature.csv",
+            };
+          }
+        });
+
+        console.log("Dynamic CSV mapping created:", dynamicCsvMap);
+        setPumpCsvMap(dynamicCsvMap);
+
+        // Set first pump as default if we have pumps
+        if (data.length > 0) {
+          setSelectedPump(data[0].name);
+        }
       } catch (err) {
         console.error("Failed to load pumps:", err);
       }
@@ -71,66 +102,179 @@ export default function MonitoringPage() {
   }, []);
 
   useEffect(() => {
-    // if (selectedPump === allOption) {
-    setData([]);
-    const allData = {};
+    // Only proceed if we have pump CSV mapping
+    if (Object.keys(pumpCsvMap).length === 0) {
+      return;
+    }
 
-    Promise.all(
-      Object.entries(pumpCsvMap).map(([pumpName, csvFile]) =>
-        fetch(csvFile)
-          .then((res) => res.text())
-          .then(
-            (csvText) =>
-              new Promise((resolve) =>
-                Papa.parse(csvText, {
-                  header: true,
-                  dynamicTyping: true,
-                  complete: (results) => {
-                    const cleaned = results.data.filter(
-                      (row) =>
-                        row.timestamp !== undefined &&
-                        row.timestamp !== null &&
-                        row.sensor_avg !== undefined
-                    );
-                    resolve([csvFile, cleaned]);
-                  },
-                })
-              )
-          )
-      )
-    ).then((results) => {
-      results.forEach(([csvFile, cleaned]) => {
-        allData[csvFile] = cleaned;
+    console.log(`Loading data for pump: ${selectedPump}`);
+    console.log("Available pumps in CSV map:", Object.keys(pumpCsvMap));
+
+    if (selectedPump === allOption) {
+      // Show all pumps - combine data from all pumps
+      setData([]);
+      const allData = {};
+
+      Promise.all(
+        Object.entries(pumpCsvMap).flatMap(([pumpName, csvFiles]) =>
+          Object.entries(csvFiles).map(([sensorType, csvFile]) => {
+            console.log(`Fetching ${csvFile} for ${pumpName} - ${sensorType}`);
+            return fetch(csvFile)
+              .then((res) => {
+                console.log(
+                  `Response for ${csvFile}:`,
+                  res.status,
+                  res.statusText
+                );
+                if (!res.ok) {
+                  throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+                }
+                return res.text();
+              })
+              .then((csvText) => {
+                console.log(
+                  `CSV text received for ${csvFile}, length:`,
+                  csvText.length
+                );
+                // Check if we got HTML instead of CSV
+                if (
+                  csvText.includes("<!doctype html>") ||
+                  csvText.includes("<html")
+                ) {
+                  console.error(`Received HTML instead of CSV for ${csvFile}`);
+                  return [`${pumpName} - ${sensorType}`, []];
+                }
+
+                return new Promise((resolve) =>
+                  Papa.parse(csvText, {
+                    header: true,
+                    dynamicTyping: true,
+                    complete: (results) => {
+                      console.log(`Parse results for ${csvFile}:`, {
+                        rows: results.data.length,
+                        errors: results.errors.length,
+                        headers: results.meta.fields,
+                      });
+
+                      const cleaned = results.data.filter(
+                        (row) =>
+                          row.timestamp !== undefined &&
+                          row.timestamp !== null &&
+                          row.sensor_avg !== undefined &&
+                          row.sensor_avg !== null
+                      );
+                      console.log(
+                        `Cleaned data for ${csvFile}:`,
+                        cleaned.length,
+                        "rows"
+                      );
+                      resolve([`${pumpName} - ${sensorType}`, cleaned]);
+                    },
+                  })
+                );
+              })
+              .catch((err) => {
+                console.error(`Failed to load ${csvFile}:`, err);
+                return [`${pumpName} - ${sensorType}`, []];
+              });
+          })
+        )
+      ).then((results) => {
+        console.log("All results processed:", results.length);
+        results.forEach(([chartKey, cleaned]) => {
+          allData[chartKey] = cleaned;
+          console.log(
+            `Added to allData: ${chartKey} with ${cleaned.length} rows`
+          );
+        });
+        setAllPumpData(allData);
+        console.log("Final allPumpData keys:", Object.keys(allData));
       });
-      setAllPumpData(allData);
-    });
-    // }
-    // else {
-    //   const csvFile = pumpCsvMap[selectedPump];
-    //   fetch(csvFile)
-    //     .then((res) => res.text())
-    //     .then((csvText) => {
-    //       Papa.parse(csvText, {
-    //         header: true,
-    //         dynamicTyping: true,
-    //         complete: (results) => {
-    //           const cleaned = results.data.filter(
-    //             (row) =>
-    //               row.timestamp !== undefined &&
-    //               row.timestamp !== null &&
-    //               row.sensor_avg !== undefined
-    //           );
-    //           setData(cleaned);
-    //         },
-    //       });
-    //     });
-    //   setAllPumpData({});
-    // }
-  }, [selectedPump]);
+    } else {
+      // Show specific pump
+      setAllPumpData({});
+      const pumpCsvFiles = pumpCsvMap[selectedPump];
+
+      console.log(`CSV files for ${selectedPump}:`, pumpCsvFiles);
+
+      if (pumpCsvFiles) {
+        const pumpData = {};
+
+        Promise.all(
+          Object.entries(pumpCsvFiles).map(([sensorType, csvFile]) => {
+            console.log(`Fetching ${csvFile} for ${sensorType}`);
+            return fetch(csvFile)
+              .then((res) => {
+                console.log(`Response for ${csvFile}:`, res.status);
+                if (!res.ok) {
+                  throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+                }
+                return res.text();
+              })
+              .then((csvText) => {
+                console.log(`CSV text for ${csvFile}, length:`, csvText.length);
+                // Check if we got HTML instead of CSV
+                if (
+                  csvText.includes("<!doctype html>") ||
+                  csvText.includes("<html")
+                ) {
+                  console.error(`Received HTML instead of CSV for ${csvFile}`);
+                  return [sensorType, []];
+                }
+
+                return new Promise((resolve) =>
+                  Papa.parse(csvText, {
+                    header: true,
+                    dynamicTyping: false,
+                    complete: (results) => {
+                      console.log(
+                        `Parse results for ${csvFile}:`,
+                        results.data.length,
+                        "rows"
+                      );
+                      const cleaned = results.data.filter(
+                        (row) =>
+                          row.timestamp !== undefined &&
+                          row.timestamp !== null &&
+                          row.sensor_avg !== undefined &&
+                          row.sensor_avg !== null
+                      );
+                      console.log(
+                        `Cleaned ${csvFile}:`,
+                        cleaned.length,
+                        "valid rows"
+                      );
+                      resolve([sensorType, cleaned]);
+                    },
+                  })
+                );
+              })
+              .catch((err) => {
+                console.error(`Failed to load ${csvFile}:`, err);
+                return [sensorType, []];
+              });
+          })
+        ).then((results) => {
+          console.log(`Results for ${selectedPump}:`, results.length);
+          results.forEach(([sensorType, cleaned]) => {
+            pumpData[sensorType] = cleaned;
+            console.log(`Added ${sensorType}: ${cleaned.length} rows`);
+          });
+          setAllPumpData(pumpData);
+          console.log(
+            `Set pump data for ${selectedPump}:`,
+            Object.keys(pumpData)
+          );
+        });
+      } else {
+        console.error(`No CSV files mapping found for pump: ${selectedPump}`);
+      }
+    }
+  }, [selectedPump, pumpCsvMap]);
 
   const manageRoutes = {
     Home: "/home",
-    Analytics: "/analytics",
+    "Audio Detection": "/analytics",
     Monitoring: "/monitoring",
     Alerts: "/alerts",
   };
@@ -140,7 +284,7 @@ export default function MonitoringPage() {
     "Our Service Providers": "/providers",
   };
 
-  // Dropdown options include "Show All Pumps"
+  // Dropdown options include "Show All Pumps" and fetched pump names
   const pumpOptions = [allOption, ...allPumps.map((pump) => pump.name)];
 
   return (
@@ -178,47 +322,25 @@ export default function MonitoringPage() {
           </select>
         </div>
 
-        {/* Status cards
-        <section className="grid grid-cols-3 gap-6 mt-4">
-          <StatusCard
-            title="Current Pump Status"
-            value="ON"
-            desc="CP-12398 Under Control"
-            color="bg-gradient-to-r from-[#32d296] to-[#0fa9a3]"
-          />
-          <StatusCard
-            title="Live Pressure"
-            value="4 PSI"
-            desc="Detecting Pressure Drops"
-            color="bg-gradient-to-r from-[#7c3aed] to-[#8b5cf6]"
-          />
-          <StatusCard
-            title="Live Temperature"
-            value="300 K"
-            desc="Temperature is optimal"
-            color="bg-gradient-to-r from-[#4f46e5] to-[#6366f1]"
-          />
-        </section> */}
-
         {/* Live charts */}
-        <section className="grid grid-cols-2 gap-6">
-          {/* {selectedPump === allOption */}
-          {Object.entries(allPumpData).map(([csvFile, pumpData]) => (
+        <section className="grid grid-cols-2 gap-6 mt-6">
+          {Object.entries(allPumpData).map(([chartKey, pumpData]) => (
             <ChartCard
-              key={csvFile}
-              title={`Live Sensor Average - ${cleanChartId(csvFile)}`}
-              chartId={csvFile}
+              key={chartKey}
+              title={`Live Sensor Average - ${chartKey}`}
+              chartId={chartKey}
               data={pumpData}
+              selectedPump={selectedPump}
             />
           ))}
-          {/* : (
-              <ChartCard
-                title={`Live Sensor Average - ${selectedPump}`}
-                chartId={pumpCsvMap[selectedPump]}
-                data={data}
-              />
-            )} */}
         </section>
+
+        {/* Show message if no data */}
+        {Object.keys(allPumpData).length === 0 && (
+          <div className="text-center py-8">
+            <p className="text-gray-500">Loading pump data...</p>
+          </div>
+        )}
       </main>
 
       {/* Reusable Chatbot Button */}
@@ -241,7 +363,7 @@ function cleanChartId(filename) {
   return filename.replace(/^\//, "").replace(/\.csv$/, "");
 }
 
-function ChartCard({ title, chartId, data }) {
+function ChartCard({ title, chartId, data, selectedPump }) {
   const navigate = useNavigate();
 
   return (

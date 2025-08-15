@@ -50,7 +50,7 @@ export default function AnalyticsPage() {
 
   const manageRoutes = {
     Home: "/home",
-    Analytics: "/analytics",
+    "Audio Detection": "/analytics",
     Monitoring: "/monitoring",
     Alerts: "/alerts",
   };

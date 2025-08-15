@@ -21,7 +21,7 @@ export default function HelpPage() {
   const currentPath = "/help";
   const manageRoutes = {
     Home: "/home",
-    Analytics: "/analytics",
+    "Audio Detection": "/analytics",
     Monitoring: "/monitoring",
     Alerts: "/alerts",
   };

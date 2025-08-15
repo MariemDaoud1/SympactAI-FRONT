@@ -21,7 +21,7 @@ export default function ServiceProvidersPage() {
   const currentPath = "/providers";
   const manageRoutes = {
     Home: "/home",
-    Analytics: "/analytics",
+    "Audio Detection": "/analytics",
     Monitoring: "/monitoring",
     Alerts: "/alerts",
   };
@@ -73,7 +73,7 @@ export default function ServiceProvidersPage() {
       certification: "ISO 9001",
       description:
         "Leading pump maintenance specialists with over 20 years of experience in industrial pump systems.",
-      image: "https://via.placeholder.com/100x100/2563eb/ffffff?text=PT",
+      image: "../assets/Pumptech-logo.png",
     },
     {
       id: 2,
@@ -92,7 +92,7 @@ export default function ServiceProvidersPage() {
       certification: "ASME Certified",
       description:
         "Specialized in complex pump installations and system optimization for maximum efficiency.",
-      image: "https://via.placeholder.com/100x100/7c3aed/ffffff?text=IPE",
+      image: "./assets/Pumpexperts-logo.png",
     },
     {
       id: 3,
@@ -294,11 +294,6 @@ function ProviderCard({ provider, onSelect, isSelected }) {
       <div className="p-6">
         {/* Header */}
         <div className="flex items-start gap-4 mb-4">
-          <img
-            src={provider.image}
-            alt={provider.name}
-            className="w-16 h-16 rounded-lg shadow-sm"
-          />
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-1">
               <h3 className="font-semibold text-gray-800">{provider.name}</h3>

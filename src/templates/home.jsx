@@ -27,7 +27,7 @@ export default function HomePage() {
   );
   const manageRoutes = {
     Home: "/home",
-    Analytics: "/analytics",
+    "Audio Detection": "/analytics",
     Monitoring: "/monitoring",
     Alerts: "/alerts",
   };
@@ -146,12 +146,12 @@ export default function HomePage() {
   const [pumpSensorData, setPumpSensorData] = useState([]);
   useEffect(() => {
     // Load one CSV file for Home page chart
-    fetch("/f1PETIT.csv")
+    fetch("/Flow.csv")
       .then((res) => res.text())
       .then((csvText) => {
         Papa.parse(csvText, {
           header: true,
-          dynamicTyping: true,
+          dynamicTyping: false,
           complete: (results) => {
             const cleaned = results.data
               .filter(
@@ -235,8 +235,8 @@ export default function HomePage() {
         </section>
 
         {/* Error Table and Reports */}
-        <section className="grid grid-cols-3 gap-6">
-          <div className="col-span-2 bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+        <section className="gap-6">
+          <div className=" bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow">
             <div className="flex justify-between items-center mb-2">
               <h3 className="font-semibold">Pumps Overview</h3>
               <span className="text-sm text-gray-500 flex items-center gap-1">
@@ -244,15 +244,15 @@ export default function HomePage() {
                 Latest Update 30 Sec Ago
               </span>
             </div>
-            <table className="w-full text-sm text-left mt-2">
+            <table className="w-full text-sm text-left mt-2 table-fixed border-collapse">
               <thead>
                 <tr className="text-gray-600 border-b">
-                  <th className="pb-2">Pump Name</th>
-                  <th className="pb-2">ID</th>
-                  <th className="pb-2">Location</th>
-                  <th className="pb-2">Material</th>
-                  <th className="pb-2">Status</th>
-                  <th className="pb-2">Pressure</th>
+                  <th className="pb-2 w-[20%]">Pump Name</th>
+                  <th className="pb-2 w-[20%]">Location</th>
+                  <th className="pb-2 w-[20%]">Material</th>
+                  <th className="pb-2 w-[20%]">Status</th>
+                  <th className="pb-2 w-[20%]">Pressure</th>
+                  <th className="pb-2 w-[20%]">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -261,18 +261,17 @@ export default function HomePage() {
                     key={i}
                     className="border-b hover:bg-gray-50 transition-colors"
                   >
-                    <td className="py-2">{pump.name}</td>
-                    <td className="py-2">{pump._id}</td>
-                    <td className="py-2">{pump.location}</td>
-                    <td className="py-2">{pump.material}</td>
+                    <td className="py-3 px-2 ">{pump.name}</td>
+                    <td className="py-3 px-2">{pump.location}</td>
+                    <td className="py-3 px-2">{pump.material}</td>
                     <td
-                      className={`py-2 font-semibold ${
+                      className={`py-3 px-2 font-semibold ${
                         pump.status === "OFF"
                           ? "text-red-500"
                           : "text-green-600"
                       }`}
                     >
-                      <div className="flex items-center gap-1">
+                      <div className="flex items-center gap-2">
                         <div
                           className={`w-2 h-2 rounded-full ${
                             pump.status === "OFF"
@@ -283,8 +282,8 @@ export default function HomePage() {
                         {pump.status}
                       </div>
                     </td>
-                    <td className="py-2">{pump.pressure_rating}</td>
-                    <td className="py-2">
+                    <td className="py-3 px-2">{pump.pressure_rating}</td>
+                    <td className="py-3 px-2">
                       <button
                         onClick={() => handlePumpToggle(i)}
                         className={`px-3 py-1 rounded-full text-xs font-medium transition-all transform hover:scale-105 ${
@@ -301,24 +300,6 @@ export default function HomePage() {
                 ))}
               </tbody>
             </table>
-          </div>
-
-          <div className="bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow">
-            <h3 className="font-semibold mb-4">Latest Error Reports</h3>
-            {[1, 2, 3, 4].map((item) => (
-              <div
-                key={item}
-                className="flex items-center gap-2 mb-3 p-2 hover:bg-blue-50 rounded-md cursor-pointer transition-all hover:scale-105 hover:shadow-sm"
-              >
-                <div className="text-sm flex-1">
-                  <div className="font-medium">CP-278 Report</div>
-                  <div className="text-gray-500">Line 3 Vibration Issue</div>
-                </div>
-                <div className="text-xs text-red-500 bg-red-50 px-2 py-1 rounded-full">
-                  High Priority
-                </div>
-              </div>
-            ))}
           </div>
         </section>
       </main>

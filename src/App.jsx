@@ -38,18 +38,9 @@ function App() {
     <BrowserRouter>
       <Routes>
         {/* Public */}
-        <Route
-          path="/"
-          element={!token ? <LandingPage /> : <Navigate to="/home" replace />}
-        />
-        <Route
-          path="/signup"
-          element={!token ? <SignUpPage /> : <Navigate to="/home" replace />}
-        />
-        <Route
-          path="/signin"
-          element={!token ? <SignInPage /> : <Navigate to="/home" replace />}
-        />
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/signup" element={<SignUpPage />} />
+        <Route path="/signin" element={<SignInPage />} />
 
         {/* Private */}
         <Route

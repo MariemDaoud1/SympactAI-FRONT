@@ -25,7 +25,7 @@ export default function SettingsPage() {
   const currentPath = "/settings";
   const manageRoutes = {
     Home: "/home",
-    Analytics: "/analytics",
+    "Audio Detection": "/analytics",
     Monitoring: "/monitoring",
     Alerts: "/alerts",
   };

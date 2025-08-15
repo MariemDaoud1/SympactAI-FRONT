@@ -1,12 +1,79 @@
-# React + Vite
+#  PumpWatch Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Real-time Pump Monitoring & Fault Detection System**
 
-Currently, two official plugins are available:
+A modern React application built with Vite for monitoring industrial pump systems, providing real-time sensor data visualization, audio-based fault detection, and comprehensive pump management.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+##  Features
 
-## Expanding the ESLint configuration
+###  **Real-time Monitoring**
+- Live sensor data visualization (Temperature, Pressure, Flow)
+- Interactive charts with time-series data
+- Multi-pump dashboard with switching capabilities
+- Real-time status indicators
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+###  **AI-Powered Audio Analysis**
+- Audio recording for pump sound analysis
+- AI-based fault detection and classification
+- Immediate maintenance recommendations
+  
+###  **Pump Management**
+- Complete pump inventory management
+- Company and user management
+
+
+##  Tech Stack
+
+- **Framework:** React 18
+- **Build Tool:** Vite
+- **Styling:** Tailwind CSS
+- **Charts:** Recharts
+- **Icons:** Lucide React
+- **Routing:** React Router DOM
+- **Data Parsing:** PapaParse
+- **Audio Processing:** Web Audio API
+
+##  Quick Start
+
+### Prerequisites
+- Node.js 18+ 
+- npm or yarn
+- Modern web browser with microphone access
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/MariemDaoud1/SympactAI-FRONT.git
+   cd SympactAI-FRONT
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
+
+3. **Start development server**
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   ```
+
+4. **Open your browser**
+   ```
+   http://localhost:5173
+   ```
+
+##  Audio Classification
+
+### Supported Audio Formats
+- WAV (recommended)
+- MP3
+- WebM (browser dependent)
+
+---
+
+**Built within Tunisian AI Society NextGen - SympactAI**

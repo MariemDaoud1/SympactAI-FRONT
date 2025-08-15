@@ -21,6 +21,13 @@ A modern React application built with Vite for monitoring industrial pump system
 - Complete pump inventory management
 - Company and user management
 
+### **Intelligent Chatbot Support**
+- Real-time AI-powered chatbot
+- Instant technical assistance and troubleshooting
+- Pump-specific maintenance guidance
+- 24/7 automated support system
+- Context-aware responses based on current pump status
+
 
 ##  Tech Stack
 
@@ -32,6 +39,8 @@ A modern React application built with Vite for monitoring industrial pump system
 - **Routing:** React Router DOM
 - **Data Parsing:** PapaParse
 - **Audio Processing:** Web Audio API
+- **Real-time Communication:** WebSocket (Socket.IO)
+- **Chatbot Integration:** Custom WebSocket client
 
 ##  Quick Start
 
@@ -76,4 +85,4 @@ A modern React application built with Vite for monitoring industrial pump system
 
 ---
 
-**Built within Tunisian AI Society NextGen - SympactAI**
+**Built within Tunisian AI Society NextGen - SympactAI** 
